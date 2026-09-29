@@ -4,17 +4,19 @@ import random
 screen = t.Screen()
 pizzat = t.Turtle()
 pizzat_smallcrust = t.Turtle()
+
+
 pizzat_smallcrust.seth(90)
 pizzat.seth(90)
 
 size = t.textinput("welcome","welcome to bills, what size would you like your pizza. we have s, m, l, or xl ")
-if(size == "s"):
+if "small" in size:
     x = 0
-if(size == "m"):
+elif "medium" in size:
     x = 10
-if(size == "l"):
+elif "large" in size:
     x = 20
-if(size == "xl"):
+elif "extra large" in size:
     x = 30
 
 pizza = (
@@ -48,9 +50,11 @@ pizza_layer1 = (
     (85 + (.75 * x), 80 + (1.5 * x))
     )
 
+
 # Register the new custom shape and name it "mystar"
 screen.register_shape("pizza", pizza)
 screen.register_shape("layer1", pizza_layer1)
+
 # Create your turtle and apply the shape
 
 pizzat.shape("pizza")
@@ -59,7 +63,6 @@ pizzat_smallcrust.shape("layer1")
 pizzat_smallcrust.color("peru")
 
 # Move it around to test
-
 
 
 
