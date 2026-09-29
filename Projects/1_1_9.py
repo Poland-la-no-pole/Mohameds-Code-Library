@@ -5,13 +5,9 @@ import random
 screen = t.Screen()
 
 custom_polygon = (
-    (30, 30),
-    (-30, 30),
-    (-30, 15),
-    (-40, 15),
-    (-40, 0),
-    (-30, 0),
-    (-30, -30),
+    (100, 100),
+    (100, 0),
+    (0, 100)
     )
 
 # Register the new custom shape and name it "mystar"
@@ -25,7 +21,7 @@ heart.fillcolor("cyan")
 
 # Move it around to test
 
-heart.right(90)
+
 
 
 
