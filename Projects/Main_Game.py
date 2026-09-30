@@ -11,12 +11,12 @@ w = 0
 #sets up our screen and background
 screen = t.Screen()
 #sets up our turtles
-heart1 = "Photos/heart.gif"
+heart1 = "GitHub/Mohameds-Code-Library/Photos/heart.gif"
 screen.addshape(heart1)
 heart.shape(heart1)
 
 
-smallArrow1 = "Photos/smallArrow1.png"
+smallArrow1 = "GitHub/Mohameds-Code-Library/Photos/smallArrow1.png"
 screen.addshape(smallArrow1)
 sA1.shape(smallArrow1)
 #sets up our cord maxes
