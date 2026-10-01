@@ -34,7 +34,6 @@ keys = {
 }
 
 
-        (heart.xcor() + 25,heart.ycor() + 5),
 
 cords = [
     (heart.xcor() + 16,heart.ycor() + 25),
