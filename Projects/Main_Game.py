@@ -2,6 +2,7 @@ import turtle as t
 import random
 import tkinter as tk
 from tkinter import messagebox
+
 #set up our objects
 heart = t.Turtle()
 sA1 = t.Turtle()
@@ -33,14 +34,15 @@ keys = {
 }
 
 
-def hitbox():
-    cords = [
-        (heart.xcor() + 16,heart.ycor() + 25),
         (heart.xcor() + 25,heart.ycor() + 5),
-        (heart.xcor(), heart.ycor() - 25),
-        (heart.xcor() - 25, heart.ycor() + 5),
-        (heart.xcor() - 16, heart.ycor() + 25),
-        (heart.xcor(), heart.ycor() + 10),
+
+cords = [
+    (heart.xcor() + 16,heart.ycor() + 25),
+    (heart.xcor() + 25,heart.ycor() + 5),
+    (heart.xcor(), heart.ycor() - 25),
+    (heart.xcor() - 25, heart.ycor() + 5),
+    (heart.xcor() - 16, heart.ycor() + 25),
+    (heart.xcor(), heart.ycor() + 10),
     ]
     
 
@@ -79,7 +81,7 @@ def move():
         x -=4
     heart.goto(x, y)
 
-    hitbox()
+
     #is a timer that runs move ever 10 milliseconds
     screen.ontimer(move, 10)
 def border():
