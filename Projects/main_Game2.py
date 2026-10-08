@@ -10,33 +10,14 @@ sbullet = t.Turtle()
 box = t.Turtle()
 counter = t.Turtle()
 screen = t.Screen()
-meanboxes = []
+
 timer = 5
 points = 0
-yMAX = 252
-xMAX = 252
+yMAX = 198
+xMAX = 200
 gameid = 0
 game_running = False
 sound = False
-for i in range(1, 5):
-    meanbox = t.Turtle()
-    meanboxes.append(meanbox)
-    meanbox1 = (
-    (10, 20),
-    (-10, 20),
-    (-10, -20),
-    (10, -20)
-    )
-    screen.register_shape("meanbox", meanbox1)
-    meanbox.shape("meanbox")
-    meanbox.fillcolor("gold1")
-    meanbox.showturtle()
-    meanbox.teleport(
-        random.randint(-xMAX + 20, xMAX - 20),
-        random.randint(-yMAX + 20, yMAX - 20)
-    )
-    meanbox.seth(random.randint(0, 359))
-    meanbox.penup()
 
 
 def gamestart():
@@ -265,33 +246,7 @@ def point(my_gameid):
         points += 1
 
     screen.ontimer(lambda: point(my_gameid), 10)
-def shoot(my_gameid):
-    if my_gameid != gameid:
-        return
-    if not game_running:
-        return
-    global heart
-    global meanbox
-    global xMAX
-    global yMAX
 
-    for meanbox in meanboxes:
-
-        if (meanbox.xcor() >= xMAX or
-            meanbox.xcor() <= -xMAX or
-            meanbox.ycor() >= yMAX or
-            meanbox.ycor() <= -yMAX):
-            angle = math.degrees(
-                math.atan2(
-                    heart.ycor() - meanbox.ycor(),
-                    heart.xcor() - meanbox.xcor()
-                )
-            )
-            meanbox.seth(angle)
-    for meanbox in meanboxes:
-        meanbox.forward(10)
-    screen.update()
-    screen.ontimer(lambda: shoot(my_gameid), 10)
 
 def restart():
     global game_running
@@ -300,8 +255,6 @@ def restart():
     mbullet.hideturtle()
     sbullet.hideturtle()
     screen.bgpic("nopic")
-    for meanbox in meanboxes:
-        meanbox.hideturtle()
     keys["w"] = False
     keys["s"] = False
     keys["d"] = False
@@ -325,7 +278,6 @@ def game():
     move(current_gameid)
     border(current_gameid)
     point(current_gameid)
-    shoot(current_gameid)
     countdown(current_gameid)
     soun(current_gameid)
     backgroundmusic(current_gameid)
