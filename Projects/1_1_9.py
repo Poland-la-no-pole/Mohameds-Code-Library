@@ -14,17 +14,17 @@ oven = t.Turtle()
 welcome = "welcome to bills, what size would you like your pizza. we have small, medium, large"
 while True:
     size = t.textinput("welcome", welcome)
-    if "small" in size or "s " in size or "Small" in size:
+    if "small" in size or "s" in size or "Small" in size or "S" in size:
         size1 = "SMALL"
         x = 0
         e = 0
         break
-    elif "medium" in size or  "m " in size or "Medium" in size:
+    elif "medium" in size or  "m" in size or "Medium" in size or "M" in size:
         size1 = "MEDIUM"
         x = 15
         e = 2
         break
-    elif "large" in size or "l " in size or "Large" in size:
+    elif "large" in size or "l" in size or "Large" in size or "L" in size:
         size1 = "LARGE"
         x = 30
         e = 4
@@ -51,6 +51,8 @@ screen.register_shape("pizza", pizza)
 pizzat.shape("circle")
 pizzat.color("LightGoldenrod1")
 pizzat.penup()
+
+
 for i in range(18):
     pizzat.right(45)
     pizzat.shapesize(2 + i/3)
