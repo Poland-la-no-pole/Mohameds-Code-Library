@@ -3,6 +3,7 @@ import random
 import math
 import sys
 import playsound3
+import leaderboard as lb
 #objects
 heart = t.Turtle()
 mbullet = t.Turtle()
@@ -11,23 +12,44 @@ box = t.Turtle()
 counter = t.Turtle()
 screen = t.Screen()
 
-timer = 5
-points = 0
+
+timer = 1
+score = 0
 yMAX = 198
 xMAX = 200
 gameid = 0
 game_running = False
 sound = False
-
+leaderboard_file_name =  "GitHub/Mohameds-Code-Library/Projects/1_2_2_leaderboard.txt"
+leader_names_list = []
+leader_scores_list = []
+player_name = t.textinput("name", "Enter your name")
+spot =t.Turtle()
 
 def gamestart():
+    global player_name
     while True:
+        while "," in player_name or len(player_name) == 0 or len(player_name) > 12:
+            player_name = t.textinput("Name", "Enter your name without using a comma")
         startchoice = t.textinput("Intro","This is my game, would you like to play it")
         if (startchoice in ["yes", "Yes", "y", "Y"]):
             break
         elif (startchoice in ["no", "No", "n", "N"]):
             sys.exit()
+def manage_leaderboard():
+    global score
+    global spot
 
+# get the names and scores from the leaderboard file
+    leader_names_list = lb.get_names(leaderboard_file_name)
+    leader_scores_list = lb.get_scores(leaderboard_file_name)
+
+# show the leaderboard with or without the current player
+    if (len(leader_scores_list) < 5 or score >= int(leader_scores_list[4])):
+        lb.update_leaderboard(leaderboard_file_name, leader_names_list, leader_scores_list, player_name, score)
+        lb.draw_leaderboard(True, leader_names_list, leader_scores_list, spot, score)
+    else:
+        lb.draw_leaderboard(False, leader_names_list, leader_scores_list, spot, score)
 keys = {
     "w": False,
     "a": False,
@@ -44,7 +66,7 @@ def startup():
     global gameid
 
     game_running = True
-    timer = 5
+    timer = 1
     points = 0
 
     # GAME ID
@@ -188,7 +210,7 @@ def countdown(my_gameid):
     global mbullet
     global sbullet
     global timer
-    global points
+    global score
     global game_running
 
     if my_gameid != gameid:
@@ -200,12 +222,12 @@ def countdown(my_gameid):
     counter.clear()
 
     if timer <= 0:
-        counter.write(
-            "Time's Up",font=("Arial", 20, "normal"))
+        counter.write("Time's Up",font=("Arial", 20, "normal"))
+        manage_leaderboard()
         restart()
 
     else:
-        counter.write("Timer: " + str(timer) + "  Points: " + str(points), font=("Arial", 20, "normal"))
+        counter.write("Timer: " + str(timer) + "  Points: " + str(score), font=("Arial", 20, "normal"))
         timer -= 1
         screen.ontimer(lambda: countdown(my_gameid), 1000)
 
@@ -213,7 +235,7 @@ def point(my_gameid):
     global yMAX
     global xMAX
     global timer
-    global points
+    global score
     global game_running
 
     if my_gameid != gameid:
@@ -237,7 +259,7 @@ def point(my_gameid):
         box.teleport(random.randint(-xMAX + 20, xMAX - 20), random.randint(-yMAX + 20, yMAX - 20))
 
         timer += 3
-        points += 1
+        score += 1
 
     screen.ontimer(lambda: point(my_gameid), 10)
 
@@ -297,7 +319,7 @@ def backgroundmusic(my_gameid):
         return
     if not game_running:
         return
-    playsound3.playsound("GitHub/Mohameds-Code-Library/Audios/FLOWERMAN.mp3", False)
+    #playsound3.playsound("GitHub/Mohameds-Code-Library/Audios/FLOWERMAN.mp3", False)
     screen.ontimer(lambda: backgroundmusic(my_gameid), 193000)
 screen.onkeypress(upclick, "w")
 screen.onkeypress(rightclick, "d")
