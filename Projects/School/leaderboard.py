@@ -129,5 +129,5 @@ def draw_leaderboard(high_scorer, leader_names, leader_scores, turtle_object, pl
         turtle_object.write("You earned a silver medal!", font=font_setup)
         turtle_object.write("You earned a bronze medal!", font=font_setup)
 '''
-get_names("GitHub/Mohameds-Code-Library/Projects/1_2_2_leaderboard.txt")
-get_scores("GitHub/Mohameds-Code-Library/Projects/1_2_2_leaderboard.txt")
+get_names("GitHub/Mohameds-Code-Library/Projects/School/1_2_2_leaderboard.txt")
+get_scores("GitHub/Mohameds-Code-Library/Projects/School/1_2_2_leaderboard.txt")

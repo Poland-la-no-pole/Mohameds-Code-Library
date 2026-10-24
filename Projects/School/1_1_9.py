@@ -105,7 +105,7 @@ for _ in range(200):
     cheeset.teleport(random.randint(-60 - x, 60 + x), random.randint(-60 - x, 60 + x))
     cheeset.stamp()
 #baking
-oven1 = "GitHub/Mohameds-Code-Library/Photos/oven.gif"
+oven1 = "GitHub/Mohameds-Code-Library/Images/random/oven.gif"
 screen.addshape(oven1)
 oven.shape(oven1)
 time.sleep(4)

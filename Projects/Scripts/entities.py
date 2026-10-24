@@ -16,9 +16,9 @@ class PhysicsEntity:
 
     def update(self, tilemap, movement = [0, 0]):
         self.collision = {"up": False, "down": False, "left": False, "right": False}
-        self.frame_movement = movement[0] + self.velocity[0], movement[1] + self.velocity[1]
+        self.frame_movement = movement[0]/1.5 + self.velocity[0], movement[1]/1.5 + self.velocity[1]
 
-        self.velocity[1] = min(5, self.velocity[1] + 0.1)
+        self.velocity[1] = min(100, self.velocity[1] + 0.2)
 
         self.pos[0] += self.frame_movement[0]
         entity_rect = self.rect()

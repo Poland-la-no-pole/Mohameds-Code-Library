@@ -39,10 +39,10 @@ class Game:
         while True:
             self.display.blit(self.assets["background"], (0, 0))
 
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2- self.scroll[0])
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2- self.scroll[0])/10
             self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
-            render_scroll = int(self.scroll[0]), int(self.scroll[1])
-
+            render_scroll = (self.scroll[0]), (self.scroll[1])
+# render_scroll = int(self.scroll[0]), int(self.scroll[1]) for later potiental use
             self.tilemap.render(self.display, offset=render_scroll)
 
             self.player.update(self.tilemap, (((self.movementx[0] - self.movementx[1]) * 5), self.movementy))
@@ -54,7 +54,7 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if self.player.jumpversion <= 1:
                         if event.key == pygame.K_w:
-                            self.player.velocity[1] = -3
+                            self.player.velocity[1] = -5
                             self.player.jumpversion += 1
                     if event.key == pygame.K_d:
                         self.movementx[0] = True

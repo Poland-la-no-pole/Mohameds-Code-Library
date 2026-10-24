@@ -1,1 +1,3 @@
 mohamed,100
+mo,0
+madhav, 0

@@ -20,7 +20,7 @@ xMAX = 200
 gameid = 0
 game_running = False
 sound = False
-leaderboard_file_name =  "GitHub/Mohameds-Code-Library/Projects/1_2_2_leaderboard.txt"
+leaderboard_file_name =  "GitHub/Mohameds-Code-Library/Projects/School/1_2_2_leaderboard.txt"
 leader_names_list = []
 leader_scores_list = []
 player_name = t.textinput("name", "Enter your name")
@@ -73,13 +73,13 @@ def startup():
     gameid += 1
 
     #heart
-    heart1 = "GitHub/Mohameds-Code-Library/Photos/heart.png"
+    heart1 = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
     screen.addshape(heart1)
     heart.shape(heart1)
     heart.showturtle()
     heart.home()
     #medium bullet
-    bulletm = "GitHub/Mohameds-Code-Library/Photos/mbullet.png"
+    bulletm = "GitHub/Mohameds-Code-Library/Images/random/mbullet.png"
     screen.addshape(bulletm)
     mbullet.shape(bulletm)
     #mbullet.showturtle()
@@ -89,7 +89,7 @@ def startup():
     box.showturtle()
 
     #background
-    screen.bgpic("GitHub/Mohameds-Code-Library/Photos/battlebox.png")
+    screen.bgpic("GitHub/Mohameds-Code-Library/Images/random/battlebox.png")
     counter.hideturtle()
     counter.penup()
     counter.teleport(0, 300)

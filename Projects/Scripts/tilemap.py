@@ -11,10 +11,15 @@ class Tilemap:
         self.offgridtiles = []
         for i in range(1000):
             self.tilemap[str(-500 + i) + ";10"] = {"type": "grass", "variant": 1, "pos": (-500 + i, 10)}
+        for i in range(10):
+            self.tilemap["-9;" + str(9 - i)] = {"type": "stone", "variant": 5, "pos": (-9, 9 - i)}
+            self.tilemap["9;" + str(9 - i)] = {"type": "stone", "variant": 2, "pos": (9, 9 - i)}
+        for i in range(7):
+            self.tilemap[str(8 - i) + ";7"] = {"type": "grass", "variant": 1, "pos": (8 - i, 7)}
+            self.tilemap[str(-8 + i) + ";4"] = {"type": "grass", "variant": 1, "pos": (-8 + i, 4)}
+        for i in range(1000):
             for t in range(10):
                 self.tilemap[str(-500 + i) + ";" + str(11 + t)] = {"type": "grass", "variant": 8, "pos": (-500 + i, 11 + t)}
-                self.tilemap["-9;" + str(9 - t)] = {"type": "stone", "variant": 5, "pos": (-9, 9 - t)}
-                self.tilemap["9;" + str(9 - t)] = {"type": "stone", "variant": 2, "pos": (9, 9 - t)}
     def tiles_around(self, pos):
         tiles = []
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
