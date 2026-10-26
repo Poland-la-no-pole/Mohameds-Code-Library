@@ -3,28 +3,95 @@ import math
 import turtle as t
 import playsound3 as p
 import sys
-def setup():
-    screen = t.Screen()
 
-    heart = t.Turtle()
-    bullets = []
+screen = t.Screen()
 
-    backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
-    screen.bgpic(backgroundimg)
+player = t.Turtle()
+bullets = []
 
-    heartimg = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
-    screen.addshape(heartimg)
-    heart.shape(heartimg)
+backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
+screen.bgpic(backgroundimg)
 
-    for _ in range(10):
-        bullet = t.Turtle()
-        bulletimg = "GitHub/Mohameds-Code-Library/Images/random/mbullet.png"
-        screen.addshape(bulletimg)
-        bullet.shape(bulletimg)
-        bullets.append(bullet)
+heartimg = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
+screen.addshape(heartimg)
+player.shape(heartimg)
 
+for _ in range(10):
+    bullet = t.Turtle()
+    bulletimg = "GitHub/Mohameds-Code-Library/Images/random/mbullet.png"
+    screen.addshape(bulletimg)
+    bullet.shape(bulletimg)
+    bullets.append(bullet)
+keys = {
+    "w": False,
+    "a": False,
+    "s": False,
+    "d": False
+}
+#gameid = 0
+#current_gameid = 0
+#game_running = False
 
-setup()
+def upclick():
+#    if not game_running:
+#        return
+    keys["w"] = True
+def downclick():
+#   if not game_running:
+#        return
+    keys["s"] = True
+def rightclick():
+#    if not game_running:
+#        return
+    keys["d"] = True
+def leftclick():
+#    if not game_running:
+#        return
+    keys["a"] = True
+def uprelease():
+    keys["w"] = False
+def downrelease():
+    keys["s"] = False
+def rightrelease():
+    keys["d"] = False
+def leftrelease():
+    keys["a"] = False
+
+def player_movement():
+#    if my_gameid != gameid:
+#        return
+
+#    if not game_running:
+#        return
+
+    player.penup()
+    y = player.ycor()
+    x = player.xcor()
+
+    if keys["w"]:
+        y += 4
+    if keys["s"]:
+        y -= 4
+    if keys["d"]:
+        x += 4
+    if keys["a"]:
+        x -= 4
+
+    player.goto(x, y)
+    screen.ontimer(player_movement, 10)
+screen.listen()
+
+screen.onkeypress(upclick, "w")
+screen.onkeypress(rightclick, "d")
+screen.onkeypress(downclick, "s")
+screen.onkeypress(leftclick, "a")
+
+screen.onkeyrelease(uprelease, "w")
+screen.onkeyrelease(downrelease, "s")
+screen.onkeyrelease(rightrelease, "d")
+screen.onkeyrelease(leftrelease, "a")
+
+player_movement()
 
 
 
