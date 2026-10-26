@@ -28,6 +28,10 @@ keys = {
     "s": False,
     "d": False
 }
+y = 0
+x = 0
+ymax = 300
+xmax = 300
 #gameid = 0
 #current_gameid = 0
 #game_running = False
@@ -78,7 +82,28 @@ def player_movement():
         x -= 4
 
     player.goto(x, y)
-    screen.ontimer(player_movement, 10)
+    screen.ontimer(player_movement, 20)
+def border():
+    global x
+    global y
+    player_right = player.xcor() + 25
+    player_left = player.xcor() - 25
+    player_up = player.ycor() + 25
+    player_down = player.ycor() - 25
+    if player_right >= xmax:
+        player.setx(xmax - 25)
+        keys["d"] = False
+    if player_left <= -xmax:
+        player.setx(-xmax + 25)
+        keys["a"] = False
+    if player_up >= ymax:
+        player.sety(ymax - 25)
+        keys["w"] = False
+    if player_down <= -ymax:
+        player.sety(-ymax + 25)
+        keys["s"] = False
+    screen.ontimer(border, 10)
+
 screen.listen()
 
 screen.onkeypress(upclick, "w")
@@ -92,6 +117,7 @@ screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
 
 player_movement()
+border()
 
 
 
