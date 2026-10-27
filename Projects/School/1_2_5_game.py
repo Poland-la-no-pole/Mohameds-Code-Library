@@ -30,6 +30,7 @@ keys = {
 }
 y = 0
 x = 0
+speed = 2
 ymax = 300
 xmax = 300
 #gameid = 0
@@ -73,13 +74,13 @@ def player_movement():
     x = player.xcor()
 
     if keys["w"]:
-        y += 4
+        y += 4 * speed
     if keys["s"]:
-        y -= 4
+        y -= 4 * speed
     if keys["d"]:
-        x += 4
+        x += 4 * speed
     if keys["a"]:
-        x -= 4
+        x -= 4 * speed
 
     player.goto(x, y)
     screen.ontimer(player_movement, 20)
@@ -115,6 +116,7 @@ screen.onkeyrelease(uprelease, "w")
 screen.onkeyrelease(downrelease, "s")
 screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
+
 
 player_movement()
 border()
