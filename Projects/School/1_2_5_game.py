@@ -8,12 +8,12 @@ screen = t.Screen()
 
 playery = 0
 playerx = 0
+meanboxy = 0
+meanboxx = 0
 speed = 2
-ba = 0
 ymax = 300
 xmax = 300
 meanboxes = []
-
 player = t.Turtle()
 player.penup()
 backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
@@ -27,10 +27,10 @@ for _ in range(20):
     meanbox = t.Turtle()
     meanboxes.append(meanbox)
     meanbox1 = (
-    (10, 20),
-    (-10, 20),
-    (-10, -20),
-    (10, -20)
+    (15, 15),
+    (-15, 15),
+    (-15, -15),
+    (15, -15)
     )
     screen.register_shape("meanbox1", meanbox1)
     meanbox.shape("meanbox1")
@@ -111,18 +111,26 @@ def border():
     player_down = player.ycor() - 25
 
     for meanbox in meanboxes:
-        meanbox_right = meanbox.xcor() + 45
-        meanbox_left = meanbox.xcor() - 45
-        meanbox_up = meanbox.ycor() + 25
-        meanbox_down = meanbox.ycor() - 25
+        meanbox_right = meanbox.xcor() + 15
+        meanbox_left = meanbox.xcor() - 15
+        meanbox_up = meanbox.ycor() + 15
+        meanbox_down = meanbox.ycor() - 15
         if meanbox_right >= xmax:
-            meanbox.setx(xmax - 45)
+            meanbox.setx(xmax - 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
         if meanbox_left <= -xmax:
-            meanbox.setx(-xmax + 45)
+            meanbox.setx(-xmax + 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
         if meanbox_up >= ymax:
-            meanbox.sety(ymax - 25)
+            meanbox.sety(ymax - 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
         if meanbox_down <= -ymax:
-            meanbox.sety(-ymax + 25)
+            meanbox.sety(-ymax + 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
     if player_right >= xmax:
         player.setx(xmax - 25)
         keys["d"] = False
@@ -136,6 +144,10 @@ def border():
         player.sety(-ymax + 25)
         keys["s"] = False
     screen.ontimer(border, 10)
+def meanbox_movement():
+    for meanbox in meanboxes:
+        meanbox.forward(4)
+    screen.ontimer(meanbox_movement, 10)
 
 
 screen.listen()
@@ -150,11 +162,12 @@ screen.onkeyrelease(downrelease, "s")
 screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
 
-
+screen.tracer(8, 1000)
 player_movement()
+meanbox_movement()
 border()
 
 
-screen.tracer(8, 45)
+
 wn = t.Screen()
 wn.mainloop()
