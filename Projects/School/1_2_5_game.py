@@ -15,7 +15,6 @@ ymax = 300
 xmax = 300
 timer = 10
 point = 0
-meanboxes = []
 
 box = t.Turtle()
 box.shape("square")
@@ -23,7 +22,6 @@ box.fillcolor("white")
 box.shapesize(2)
 box.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
 
-sounds = []
 
 counter = t.Turtle()
 counter.hideturtle()
@@ -48,9 +46,10 @@ meanbox1 = (
     (15, -15)
 )
 
-
+meanboxes = []
+sounds = ["GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav", "GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav"]
 screen.register_shape("meanbox1", meanbox1)
-for i in range(10):
+for _ in range(10):
     meanbox = t.Turtle()
     meanboxes.append(meanbox)
     meanbox.shape("meanbox1")
@@ -61,6 +60,7 @@ for i in range(10):
         meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
     meanbox.seth(random.randint(0, 359))
     meanbox.penup()
+
 keys = {
     "w": False,
     "a": False,
@@ -190,7 +190,6 @@ def points():
         point += 10
     screen.update()
 def collision():
-    global timer
     player_right = player.xcor() + 25
     player_left = player.xcor() - 25
     player_top = player.ycor() + 25
@@ -201,6 +200,8 @@ def collision():
         meanbox_top = meanbox.ycor() + 15
         meanbox_bottom = meanbox.ycor() - 15
         if (player_right >= meanbox_left and player_left <= meanbox_right and player_top >= meanbox_bottom and player_bottom <= meanbox_top):
+            index = (meanboxes.index(meanbox))
+            p.playsound(sounds[index], True)
             sys.exit()
 
 def countdown():
@@ -223,10 +224,7 @@ def countdown():
 def gameloop():
     global point
     player_movement()
-    if point < 11:
-        meanbox_pattern1()
-    if 11 <= point < 21:
-        meanbox_pattern2()
+    meanbox_pattern1()
     border()
     points()
     collision()
@@ -248,7 +246,7 @@ screen.onkeyrelease(leftrelease, "a")
 countdown()
 gameloop()
 
-screen.tracer(0)
+screen.tracer(32, 16)
 
 wn = t.Screen()
 wn.mainloop()
