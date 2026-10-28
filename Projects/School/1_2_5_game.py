@@ -23,12 +23,16 @@ box.fillcolor("white")
 box.shapesize(2)
 box.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
 
+sounds = []
+
 counter = t.Turtle()
 counter.hideturtle()
 counter.penup()
 counter.teleport(0, 300)
+
 player = t.Turtle()
 player.penup()
+
 backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
 screen.bgpic(backgroundimg)
 
@@ -43,14 +47,18 @@ meanbox1 = (
     (-15, -15),
     (15, -15)
 )
+
+
 screen.register_shape("meanbox1", meanbox1)
-for _ in range(20):
+for i in range(10):
     meanbox = t.Turtle()
     meanboxes.append(meanbox)
     meanbox.shape("meanbox1")
     meanbox.fillcolor("gold1")
     meanbox.showturtle()
     meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
+    if -65 < meanbox.xcor() < 65 and -65 < meanbox.ycor() < 65:
+        meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
     meanbox.seth(random.randint(0, 359))
     meanbox.penup()
 keys = {
@@ -120,28 +128,6 @@ def border():
     player_left = player.xcor() - 25
     player_top = player.ycor() + 25
     player_bottom = player.ycor() - 25
-
-    for meanbox in meanboxes:
-        meanbox_right = meanbox.xcor() + 15
-        meanbox_left = meanbox.xcor() - 15
-        meanbox_top = meanbox.ycor() + 15
-        meanbox_bottom = meanbox.ycor() - 15
-        if meanbox_right >= xmax:
-            meanbox.setx(xmax - 15)
-            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
-            meanbox.seth(angle)
-        if meanbox_left <= -xmax:
-            meanbox.setx(-xmax + 15)
-            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
-            meanbox.seth(angle)
-        if meanbox_top >= ymax:
-            meanbox.sety(ymax - 15)
-            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
-            meanbox.seth(angle)
-        if meanbox_bottom <= -ymax:
-            meanbox.sety(-ymax + 15)
-            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
-            meanbox.seth(angle)
     if player_right >= xmax:
         player.setx(xmax - 25)
         keys["d"] = False
@@ -154,9 +140,38 @@ def border():
     if player_bottom <= -ymax:
         player.sety(-ymax + 25)
         keys["s"] = False
-def meanbox_movement():
+def meanbox_pattern1():
     for meanbox in meanboxes:
         meanbox.forward(4)
+    for meanbox in meanboxes:
+        meanbox_right = meanbox.xcor() + 15
+        meanbox_left = meanbox.xcor() - 15
+        meanbox_top = meanbox.ycor() + 15
+        meanbox_bottom = meanbox.ycor() - 15
+        if meanbox_right >= xmax:
+            meanbox.setx(xmax - 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
+            p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+        if meanbox_left <= -xmax:
+            meanbox.setx(-xmax + 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
+            p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+        if meanbox_top >= ymax:
+            meanbox.sety(ymax - 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
+            p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+        if meanbox_bottom <= -ymax:
+            meanbox.sety(-ymax + 15)
+            angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
+            meanbox.seth(angle)
+            p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+    screen.update()
+def meanbox_pattern2():
+    for meanbox in meanboxes:
+        meanbox.forward(10)
     screen.update()
 def points():
     global timer
@@ -172,7 +187,7 @@ def points():
     if (player_right >= box_left and player_left <= box_right and player_top >= box_bottom and player_bottom <= box_top):
         box.teleport(random.randint(-xmax + 20, xmax - 20), random.randint(-ymax + 20, ymax - 20))
         timer += 3
-        point += 1
+        point += 10
     screen.update()
 def collision():
     global timer
@@ -204,9 +219,14 @@ def countdown():
         timer -= 1
     screen.ontimer(countdown, 1000)
 
+
 def gameloop():
+    global point
     player_movement()
-    meanbox_movement()
+    if point < 11:
+        meanbox_pattern1()
+    if 11 <= point < 21:
+        meanbox_pattern2()
     border()
     points()
     collision()
@@ -224,11 +244,11 @@ screen.onkeyrelease(downrelease, "s")
 screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
 
-screen.tracer(0)
+
 countdown()
 gameloop()
 
-
+screen.tracer(0)
 
 wn = t.Screen()
 wn.mainloop()
