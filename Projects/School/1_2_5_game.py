@@ -24,7 +24,9 @@ box.shapesize(2)
 box.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
 
 counter = t.Turtle()
-
+counter.hideturtle()
+counter.penup()
+counter.teleport(0, 300)
 player = t.Turtle()
 player.penup()
 backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
@@ -116,8 +118,8 @@ def border():
 
     player_right = player.xcor() + 25
     player_left = player.xcor() - 25
-    player_up = player.ycor() + 25
-    player_down = player.ycor() - 25
+    player_top = player.ycor() + 25
+    player_bottom = player.ycor() - 25
 
     for meanbox in meanboxes:
         meanbox_right = meanbox.xcor() + 15
@@ -146,10 +148,10 @@ def border():
     if player_left <= -xmax:
         player.setx(-xmax + 25)
         keys["a"] = False
-    if player_up >= ymax:
+    if player_top >= ymax:
         player.sety(ymax - 25)
         keys["w"] = False
-    if player_down <= -ymax:
+    if player_bottom <= -ymax:
         player.sety(-ymax + 25)
         keys["s"] = False
 def meanbox_movement():
@@ -172,12 +174,42 @@ def points():
         timer += 3
         point += 1
     screen.update()
+def collision():
+    global timer
+    player_right = player.xcor() + 25
+    player_left = player.xcor() - 25
+    player_top = player.ycor() + 25
+    player_bottom = player.ycor() - 25
+    for meanbox in meanboxes:
+        meanbox_right = meanbox.xcor() + 15
+        meanbox_left = meanbox.xcor() - 15
+        meanbox_top = meanbox.ycor() + 15
+        meanbox_bottom = meanbox.ycor() - 15
+        if (player_right >= meanbox_left and player_left <= meanbox_right and player_top >= meanbox_bottom and player_bottom <= meanbox_top):
+            sys.exit()
+
+def countdown():
+    global counter
+    global timer
+    global point
+
+    counter.clear()
+
+    if timer <= 0:
+        counter.write("Time's Up",font=("Arial", 20, "normal"))
+        sys.exit()
+
+    else:
+        counter.write("Timer: " + str(timer) + "  Points: " + str(point), font=("Arial", 20, "normal"))
+        timer -= 1
+    screen.ontimer(countdown, 1000)
 
 def gameloop():
     player_movement()
     meanbox_movement()
     border()
     points()
+    collision()
     screen.ontimer(gameloop, 16)
 
 screen.listen()
@@ -193,6 +225,7 @@ screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
 
 screen.tracer(0)
+countdown()
 gameloop()
 
 
