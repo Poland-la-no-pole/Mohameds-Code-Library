@@ -13,7 +13,18 @@ meanboxx = 0
 speed = 2
 ymax = 300
 xmax = 300
+timer = 10
+point = 0
 meanboxes = []
+
+box = t.Turtle()
+box.shape("square")
+box.fillcolor("white")
+box.shapesize(2)
+box.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
+
+counter = t.Turtle()
+
 player = t.Turtle()
 player.penup()
 backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
@@ -23,23 +34,21 @@ heartimg = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
 screen.addshape(heartimg)
 player.shape(heartimg)
 
-for _ in range(20):
-    meanbox = t.Turtle()
-    meanboxes.append(meanbox)
-    meanbox1 = (
+
+meanbox1 = (
     (15, 15),
     (-15, 15),
     (-15, -15),
     (15, -15)
-    )
-    screen.register_shape("meanbox1", meanbox1)
+)
+screen.register_shape("meanbox1", meanbox1)
+for _ in range(20):
+    meanbox = t.Turtle()
+    meanboxes.append(meanbox)
     meanbox.shape("meanbox1")
     meanbox.fillcolor("gold1")
     meanbox.showturtle()
-    meanbox.teleport(
-        random.randint(-xmax + 20, xmax - 20),
-        random.randint(-ymax + 20, ymax - 20)
-    )
+    meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
     meanbox.seth(random.randint(0, 359))
     meanbox.penup()
 keys = {
@@ -98,7 +107,7 @@ def player_movement():
         x -= 4 * speed
 
     player.goto(x, y)
-    screen.ontimer(player_movement, 20)
+    screen.update()
 def border():
     global playerx
     global playery
@@ -113,8 +122,8 @@ def border():
     for meanbox in meanboxes:
         meanbox_right = meanbox.xcor() + 15
         meanbox_left = meanbox.xcor() - 15
-        meanbox_up = meanbox.ycor() + 15
-        meanbox_down = meanbox.ycor() - 15
+        meanbox_top = meanbox.ycor() + 15
+        meanbox_bottom = meanbox.ycor() - 15
         if meanbox_right >= xmax:
             meanbox.setx(xmax - 15)
             angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
@@ -123,11 +132,11 @@ def border():
             meanbox.setx(-xmax + 15)
             angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
             meanbox.seth(angle)
-        if meanbox_up >= ymax:
+        if meanbox_top >= ymax:
             meanbox.sety(ymax - 15)
             angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
             meanbox.seth(angle)
-        if meanbox_down <= -ymax:
+        if meanbox_bottom <= -ymax:
             meanbox.sety(-ymax + 15)
             angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
             meanbox.seth(angle)
@@ -143,12 +152,33 @@ def border():
     if player_down <= -ymax:
         player.sety(-ymax + 25)
         keys["s"] = False
-    screen.ontimer(border, 10)
 def meanbox_movement():
     for meanbox in meanboxes:
         meanbox.forward(4)
-    screen.ontimer(meanbox_movement, 10)
+    screen.update()
+def points():
+    global timer
+    global point
+    player_right = player.xcor() + 25
+    player_left = player.xcor() - 25
+    player_top = player.ycor() + 25
+    player_bottom = player.ycor() - 25
+    box_left = box.xcor() - 20
+    box_right = box.xcor() + 20
+    box_bottom = box.ycor() - 20
+    box_top = box.ycor() + 20
+    if (player_right >= box_left and player_left <= box_right and player_top >= box_bottom and player_bottom <= box_top):
+        box.teleport(random.randint(-xmax + 20, xmax - 20), random.randint(-ymax + 20, ymax - 20))
+        timer += 3
+        point += 1
+    screen.update()
 
+def gameloop():
+    player_movement()
+    meanbox_movement()
+    border()
+    points()
+    screen.ontimer(gameloop, 16)
 
 screen.listen()
 
@@ -162,10 +192,8 @@ screen.onkeyrelease(downrelease, "s")
 screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
 
-screen.tracer(8, 1000)
-player_movement()
-meanbox_movement()
-border()
+screen.tracer(0)
+gameloop()
 
 
 
