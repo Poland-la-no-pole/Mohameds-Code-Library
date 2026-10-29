@@ -27,7 +27,7 @@ player_name = t.textinput("name", "Enter your name")
 spot =t.Turtle()
 
 def gamestart():
-    global player_name
+    player_name = t.textinput("name", "Enter your name")
     while True:
         while "," in player_name or len(player_name) == 0 or len(player_name) > 12:
             player_name = t.textinput("Name", "Enter your name without using a comma")

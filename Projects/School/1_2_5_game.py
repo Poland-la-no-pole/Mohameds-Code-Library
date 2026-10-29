@@ -140,6 +140,7 @@ def border():
     if player_bottom <= -ymax:
         player.sety(-ymax + 25)
         keys["s"] = False
+
 def meanbox_pattern1():
     for meanbox in meanboxes:
         meanbox.forward(4)
@@ -168,11 +169,14 @@ def meanbox_pattern1():
             angle = math.degrees(math.atan2(player.ycor() - meanbox.ycor(),player.xcor() - meanbox.xcor()))
             meanbox.seth(angle)
             p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
     screen.update()
+
 def meanbox_pattern2():
     for meanbox in meanboxes:
         meanbox.forward(10)
     screen.update()
+
 def points():
     global timer
     global point
@@ -189,6 +193,7 @@ def points():
         timer += 3
         point += 10
     screen.update()
+
 def collision():
     player_right = player.xcor() + 25
     player_left = player.xcor() - 25
