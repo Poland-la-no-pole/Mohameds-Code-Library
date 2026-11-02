@@ -37,12 +37,12 @@ class Game():
         self.gameid = new_gameid
         print(self.gameid)
 
-        #if self.gameid == 0:
-            #self.start()
-        #else:
-            #self.player_name = player_name
-            #self.game_running = True
-        self.game_running = True
+        if self.gameid == 0:
+            self.start()
+            self.game_running = True
+        else:
+            self.player_name = player_name
+            self.game_running = True
 
         self.backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
         self.screen.bgpic(self.backgroundimg)
@@ -97,6 +97,7 @@ class Game():
             self.meanbox.seth(random.randint(0, 359))
             self.meanbox.penup()
         self.setup_controls()
+        self.score_tracker(self.gameid)
 
     def setup_controls(self):
         self.screen.listen()
@@ -126,7 +127,6 @@ class Game():
             self.player.setx(self.player.xcor() - self.speed)
         if self.keys["d"]:
             self.player.setx(self.player.xcor() + self.speed)
-
 
     def click(self, keys, key):
         keys[key] = True
@@ -217,6 +217,60 @@ class Game():
                 meanbox.forward(4)
         return False
 
+    def start(self):
+        self.player_name = t.textinput("name", "Enter your name")
+        while "," in self.player_name or len(self.player_name) == 0 or len(self.player_name) > 12:
+            self.player_name = t.textinput("Name", "Enter your name without using a comma")
+        while True:
+            self.startchoice = t.textinput("Intro","This is my game, would you like to play it")
+            if (self.startchoice in ["yes", "Yes", "y", "Y"]):
+                self.game_running = True
+                break
+            if(self.startchoice == None):
+                sys.exit()
+            elif (self.startchoice in ["no", "No", "n", "N"]):
+                sys.exit()
+
+    def stop(self):
+        self.game_running = False
+        self.gameid += 1
+        self.screen.clear()
+
+    def restart_game(self):
+        while True:
+            self.choice = t.textinput(
+                "Game Over",
+                "You lost! Would you like to play again? (yes/no)"
+            )
+
+            if(self.choice in ["yes", "Yes", "y", "Y"]):
+                break
+            if(self.choice == None):
+                self.screen.bye()
+                sys.exit()
+            if(self.choice in ["no", "No", "n", "NO"]):
+                self.screen.bye()
+                sys.exit()
+
+        new_game = Game(screen=self.screen, new_gameid=self.gameid, player_name=self.player_name)
+
+        new_game.run()
+
+    def score_tracker(self, my_gameid):
+        if my_gameid != self.gameid:
+            return False
+
+        if not self.game_running:
+            return False
+        
+        self.counter.clear()
+        self.time -= 1
+        self.counter.write("Timer: " + str(self.time) + "  Points: " + str(self.score), font=("Arial", 20, "normal"))
+        if self.time <= 0:
+            self.timeover = True
+            return self.timeover
+        self.screen.ontimer(lambda: self.score_tracker(self.gameid), 1000)
+        return self.time
 
     def run(self):
         if not self.game_running:
@@ -225,6 +279,17 @@ class Game():
         self.player_movement(self.gameid)
         self.border(self.gameid)
         self.bullet_pattern1(self.gameid)
+
+        if self.timeover:
+            self.stop()
+            self.restart_game()
+            return
+
+        lost = self.bullet_pattern1(self.gameid)
+        if lost:
+            self.stop()
+            self.restart_game()
+            return
 
         self.screen.tracer(32, 10)
         self.screen.update()
