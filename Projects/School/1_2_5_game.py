@@ -16,9 +16,7 @@ class Game():
         self.player = t.Turtle()
         self.coin = t.Turtle()
 
-        self.x = self.player.xcor()
-        self.y = self.player.ycor()
-        self.speed = 5
+        self.speed = 10
         self.ymax = 300
         self.xmax = 300
         self.package = []
@@ -121,15 +119,13 @@ class Game():
             return
 
         if self.keys["w"]:
-            self.y += self.speed
+            self.player.sety(self.player.ycor() + self.speed)
         if self.keys["s"]:
-            self.y -= self.speed
+            self.player.sety(self.player.ycor() - self.speed)
         if self.keys["a"]:
-            self.x -= self.speed
+            self.player.setx(self.player.xcor() - self.speed)
         if self.keys["d"]:
-            self.x += self.speed
-
-        self.player.goto(self.x, self.y)
+            self.player.setx(self.player.xcor() + self.speed)
 
 
     def click(self, keys, key):
@@ -138,11 +134,38 @@ class Game():
     def release(self, keys, key):
         keys[key] = False
 
+    def border(self, my_gameid):
+        if my_gameid != self.gameid:
+            return
+
+        if not self.game_running:
+            return
+
+        player_right = self.player.xcor() + self.player_width/2
+        player_left = self.player.xcor() - self.player_width/2
+        player_top = self.player.ycor() + self.player_height/2
+        player_bottom = self.player.ycor() - self.player_height/2
+
+        if player_right > self.xmax:
+            self.player.setx(self.xmax - self.player_width/2)
+            
+
+        if player_left < -self.xmax:
+            self.player.setx(-self.xmax + self.player_width/2)
+
+        if player_top > self.ymax:
+            self.player.sety(self.ymax - self.player_height/2)
+
+        if player_bottom < -self.ymax:
+            self.player.sety(-self.ymax + self.player_height/2)
+
+
     def run(self):
         if not self.game_running:
             return
 
         self.player_movement(self.gameid)
+        self.border(self.gameid)
 
         self.screen.tracer(32, 10)
         self.screen.update()

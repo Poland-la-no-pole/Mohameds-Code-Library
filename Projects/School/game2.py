@@ -188,8 +188,6 @@ class Game():
                 self.screen.bye()
                 sys.exit()
 
-
-
         new_game = Game(screen=self.screen, new_gameid=self.gameid, player_name=self.player_name)
 
         new_game.run()
