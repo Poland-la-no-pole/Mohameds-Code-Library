@@ -3,6 +3,7 @@ import math
 import turtle as t
 import playsound3 as p
 import sys
+import leaderboard as lb
 
 screen = t.Screen()
 
@@ -15,51 +16,10 @@ ymax = 300
 xmax = 300
 timer = 10
 point = 0
-
-box = t.Turtle()
-box.shape("square")
-box.fillcolor("white")
-box.shapesize(2)
-box.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
-
-
-counter = t.Turtle()
-counter.hideturtle()
-counter.penup()
-counter.teleport(0, 300)
-
-player = t.Turtle()
-player.penup()
-
-backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
-screen.bgpic(backgroundimg)
-
-heartimg = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
-screen.addshape(heartimg)
-player.shape(heartimg)
-
-
-meanbox1 = (
-    (15, 15),
-    (-15, 15),
-    (-15, -15),
-    (15, -15)
-)
-
-meanboxes = []
-sounds = ["GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav", "GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav"]
-screen.register_shape("meanbox1", meanbox1)
-for _ in range(10):
-    meanbox = t.Turtle()
-    meanboxes.append(meanbox)
-    meanbox.shape("meanbox1")
-    meanbox.fillcolor("gold1")
-    meanbox.showturtle()
-    meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
-    if -65 < meanbox.xcor() < 65 and -65 < meanbox.ycor() < 65:
-        meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
-    meanbox.seth(random.randint(0, 359))
-    meanbox.penup()
+gameid = 0
+current_gameid = 0
+game_running = False
+leaderboard_file_name =  "GitHub/Mohameds-Code-Library/Projects/School/1_2_5_gameleaderboard.txt"
 
 keys = {
     "w": False,
@@ -67,9 +27,84 @@ keys = {
     "s": False,
     "d": False
 }
-#gameid = 0
-#current_gameid = 0
-#game_running = False
+def gamestart():
+    player_name = t.textinput("name", "Enter your name")
+    while True:
+        while "," in player_name or len(player_name) == 0 or len(player_name) > 12:
+            player_name = t.textinput("Name", "Enter your name without using a comma")
+        startchoice = t.textinput("Intro","This is my game, would you like to play it")
+        if (startchoice in ["yes", "Yes", "y", "Y"]):
+            break
+        elif (startchoice in ["no", "No", "n", "N"]):
+            sys.exit()
+def manage_leaderboard():
+    global score
+    global spot
+    global player_name
+
+# get the names and scores from the leaderboard file
+    leader_names_list = lb.get_names(leaderboard_file_name)
+    leader_scores_list = lb.get_scores(leaderboard_file_name)
+
+# show the leaderboard with or without the current player
+    if (len(leader_scores_list) < 5 or score >= int(leader_scores_list[4])):
+        lb.update_leaderboard(leaderboard_file_name, leader_names_list, leader_scores_list, player_name, score)
+        lb.draw_leaderboard(True, leader_names_list, leader_scores_list, spot, score)
+    else:
+        lb.draw_leaderboard(False, leader_names_list, leader_scores_list, spot, score)
+def startup():
+    global game_running
+    global gameid
+
+    game_running = True
+    box = t.Turtle()
+    box.shape("square")
+    box.fillcolor("white")
+    box.shapesize(2)
+    box.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
+
+
+    counter = t.Turtle()
+    counter.hideturtle()
+    counter.penup()
+    counter.teleport(0, 300)
+
+    player = t.Turtle()
+    player.penup()
+
+    backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
+    screen.bgpic(backgroundimg)
+
+    heartimg = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
+    screen.addshape(heartimg)
+    player.shape(heartimg)
+
+
+    meanbox1 = (
+        (15, 15),
+        (-15, 15),
+        (-15, -15),
+        (15, -15)
+    )
+
+    meanboxes = []
+    sounds = ["GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav", "GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav"]
+    screen.register_shape("meanbox1", meanbox1)
+    for _ in range(10):
+        meanbox = t.Turtle()
+        meanboxes.append(meanbox)
+        meanbox.shape("meanbox1")
+        meanbox.fillcolor("gold1")
+        meanbox.showturtle()
+        meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
+        if -65 < meanbox.xcor() < 65 and -65 < meanbox.ycor() < 65:
+            meanbox.teleport(random.randint(-xmax + 20, xmax - 20),random.randint(-ymax + 20, ymax - 20))
+        meanbox.seth(random.randint(0, 359))
+        meanbox.penup()
+
+
+    # GAME ID
+    gameid += 1
 
 def upclick():
 #    if not game_running:
@@ -97,32 +132,13 @@ def leftrelease():
     keys["a"] = False
 
 def player_movement():
-#    if my_gameid != gameid:
-#        return
-
-#    if not game_running:
-#        return
-
-    player.penup()
-    y = player.ycor()
-    x = player.xcor()
-
-    if keys["w"]:
-        y += 4 * speed
-    if keys["s"]:
-        y -= 4 * speed
-    if keys["d"]:
-        x += 4 * speed
-    if keys["a"]:
-        x -= 4 * speed
-
-    player.goto(x, y)
-    screen.update()
+    global player
 def border():
     global playerx
     global playery
     global bulletx
     global bullety
+    global player
 
     player_right = player.xcor() + 25
     player_left = player.xcor() - 25
@@ -142,6 +158,7 @@ def border():
         keys["s"] = False
 
 def meanbox_pattern1():
+    global meanboxes
     for meanbox in meanboxes:
         meanbox.forward(4)
     for meanbox in meanboxes:
@@ -180,6 +197,7 @@ def meanbox_pattern2():
 def points():
     global timer
     global point
+    global box
     player_right = player.xcor() + 25
     player_left = player.xcor() - 25
     player_top = player.ycor() + 25
@@ -191,10 +209,13 @@ def points():
     if (player_right >= box_left and player_left <= box_right and player_top >= box_bottom and player_bottom <= box_top):
         box.teleport(random.randint(-xmax + 20, xmax - 20), random.randint(-ymax + 20, ymax - 20))
         timer += 3
-        point += 10
+        point += 1
     screen.update()
 
 def collision():
+    global sounds
+    global meanboxes
+    global meanbox
     player_right = player.xcor() + 25
     player_left = player.xcor() - 25
     player_top = player.ycor() + 25
@@ -223,7 +244,26 @@ def countdown():
     else:
         counter.write("Timer: " + str(timer) + "  Points: " + str(point), font=("Arial", 20, "normal"))
         timer -= 1
-    screen.ontimer(countdown, 1000)
+    screen.ontimer(lambda: countdown(gameid), 1000)
+
+def restart():
+    global game_running
+    player.hideturtle()
+    box.hideturtle()
+    meanbox.hideturtle()
+    screen.bgpic("nopic")
+    keys["w"] = False
+    keys["s"] = False
+    keys["d"] = False
+    keys["a"] = False
+    game_running = False
+    endchoice = t.textinput("Outro","YOU DIE, would you like to play again")
+
+    if (endchoice in ["yes", "Yes", "y", "Y"]):
+        game_running = False
+
+    elif(endchoice in ["no", "No", "n", "N"]):
+        sys.exit()
 
 
 def gameloop():
@@ -234,6 +274,8 @@ def gameloop():
     points()
     collision()
     screen.ontimer(gameloop, 16)
+
+gamestart()
 
 screen.listen()
 
@@ -248,7 +290,10 @@ screen.onkeyrelease(rightrelease, "d")
 screen.onkeyrelease(leftrelease, "a")
 
 
+startup()
+
 countdown()
+
 gameloop()
 
 screen.tracer(32, 16)
