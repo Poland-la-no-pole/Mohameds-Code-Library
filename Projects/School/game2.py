@@ -188,9 +188,9 @@ class Game():
                 self.screen.bye()
                 sys.exit()
 
-        screen = self.screen
 
-        new_game = Game(screen=screen, new_gameid=self.gameid, player_name=self.player_name )
+
+        new_game = Game(screen=self.screen, new_gameid=self.gameid, player_name=self.player_name)
 
         new_game.run()
 
@@ -244,6 +244,7 @@ class Game():
         self.screen.ontimer(self.run, 16)
 
 game = Game()
+
 game.run()
 
 t.mainloop()
