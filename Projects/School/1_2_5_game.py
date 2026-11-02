@@ -5,12 +5,20 @@ import playsound3 as p
 import sys
 import leaderboard as lb
 
-def Game():
+class Game():
     def __init__(self, screen=None, new_gameid=0, player_name=None):
         if screen is None:
             self.screen = t.Screen()
         else:
             self.screen = screen
+
+        self.counter = t.Turtle()
+        self.player = t.Turtle()
+        self.coin = t.Turtle()
+
+        self.x = self.player.xcor()
+        self.y = self.player.ycor()
+        self.speed = 5
         self.ymax = 300
         self.xmax = 300
         self.package = []
@@ -31,23 +39,20 @@ def Game():
         self.gameid = new_gameid
         print(self.gameid)
 
-        if self.gameid == 0:
-            self.start()
-        else:
-            self.player_name = player_name
-            self.game_running = True
-
-
+        #if self.gameid == 0:
+            #self.start()
+        #else:
+            #self.player_name = player_name
+            #self.game_running = True
+        self.game_running = True
 
         self.backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
         self.screen.bgpic(self.backgroundimg)
 
-        self.counter = t.Turtle()
         self.counter.hideturtle()
         self.counter.penup()
         self.counter.teleport(0, 300)
 
-        self.player = t.Turtle()
         self.player.penup()
         self.heartimg = "GitHub/Mohameds-Code-Library/Images/random/heart.png"
         self.screen.addshape(self.heartimg)
@@ -55,7 +60,6 @@ def Game():
         self.player_height = 50
         self.player_width = 50
 
-        self.coin = t.Turtle()
         self.coin.shape("circle")
         self.coin.fillcolor("gold")
         self.coin.shapesize(2)
@@ -94,5 +98,59 @@ def Game():
                 break
             self.meanbox.seth(random.randint(0, 359))
             self.meanbox.penup()
-        self.movement.setup_controls(self.screen, self.keys)
-        self.score_tracker(self.gameid)
+        self.setup_controls()
+
+    def setup_controls(self):
+        self.screen.listen()
+
+        self.screen.onkeypress(lambda: self.click(self.keys, "w"), "w")
+        self.screen.onkeypress(lambda: self.click(self.keys, "a"), "a")
+        self.screen.onkeypress(lambda: self.click(self.keys, "s"), "s")
+        self.screen.onkeypress(lambda: self.click(self.keys, "d"), "d")
+
+        self.screen.onkeyrelease(lambda: self.release(self.keys, "w"), "w")
+        self.screen.onkeyrelease(lambda: self.release(self.keys, "a"), "a")
+        self.screen.onkeyrelease(lambda: self.release(self.keys, "s"), "s")
+        self.screen.onkeyrelease(lambda: self.release(self.keys, "d"), "d")
+
+    def player_movement(self, my_gameid):
+        if my_gameid != self.gameid:
+            return
+
+        if not self.game_running:
+            return
+
+        if self.keys["w"]:
+            self.y += self.speed
+        if self.keys["s"]:
+            self.y -= self.speed
+        if self.keys["a"]:
+            self.x -= self.speed
+        if self.keys["d"]:
+            self.x += self.speed
+
+        self.player.goto(self.x, self.y)
+
+
+    def click(self, keys, key):
+        keys[key] = True
+
+    def release(self, keys, key):
+        keys[key] = False
+
+    def run(self):
+        if not self.game_running:
+            return
+
+        self.player_movement(self.gameid)
+
+        self.screen.tracer(32, 10)
+        self.screen.update()
+        self.screen.ontimer(self.run, 16)
+
+game = Game()
+
+game.run()
+
+t.mainloop()
+
