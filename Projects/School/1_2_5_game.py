@@ -37,12 +37,15 @@ class Game():
         self.gameid = new_gameid
         print(self.gameid)
 
+        
         if self.gameid == 0:
             self.start()
             self.game_running = True
         else:
             self.player_name = player_name
             self.game_running = True
+        
+        self.setup_controls()
 
         self.backgroundimg = "GitHub/Mohameds-Code-Library/Images/random/battlebox.png"
         self.screen.bgpic(self.backgroundimg)
@@ -96,7 +99,6 @@ class Game():
                 break
             self.meanbox.seth(random.randint(0, 359))
             self.meanbox.penup()
-        self.setup_controls()
         self.score_tracker(self.gameid)
 
     def setup_controls(self):
@@ -272,13 +274,37 @@ class Game():
         self.screen.ontimer(lambda: self.score_tracker(self.gameid), 1000)
         return self.time
 
+    def points(self, my_gameid):
+        if my_gameid != self.gameid:
+            return False
+
+        if not self.game_running:
+            return False
+        player_right = self.player.xcor() + self.player_width / 2
+        player_left = self.player.xcor() - self.player_width / 2
+        player_top = self.player.ycor() + self.player_height / 2
+        player_bottom = self.player.ycor() - self.player_height / 2
+
+        point_right = self.coin.xcor() + self.coin_width / 2
+        point_left = self.coin.xcor() - self.coin_width / 2
+        point_top = self.coin.ycor() + self.coin_height / 2
+        point_bottom = self.coin.ycor() - self.coin_height / 2
+        if (player_right >= point_left and player_left <= point_right and player_top >= point_bottom and player_bottom <= point_top):
+            self.coin.teleport(random.randint(-self.xmax + 20, self.xmax - 20), random.randint(-self.ymax+ 20, self.ymax - 20))
+            self.time += 4
+            self.score += 1
+            p.playsound("GitHub/Mohameds-Code-Library/Audios/jarona.wav", False)
+        return (self.time, self.score)
+
     def run(self):
         if not self.game_running:
             return
 
         self.player_movement(self.gameid)
         self.border(self.gameid)
+        self.points(self.gameid)
         self.bullet_pattern1(self.gameid)
+
 
         if self.timeover:
             self.stop()
