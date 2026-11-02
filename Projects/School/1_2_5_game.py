@@ -159,6 +159,64 @@ class Game():
         if player_bottom < -self.ymax:
             self.player.sety(-self.ymax + self.player_height/2)
 
+    def projectle_player_collision(self):
+        player_right = self.player.xcor() + self.player_width / 2
+        player_left = self.player.xcor() - self.player_width / 2
+        player_top = self.player.ycor() + self.player_height / 2
+        player_bottom = self.player.ycor() - self.player_height / 2
+        for meanbox in self.meanboxes:
+            meanbox_right = meanbox.xcor() + self.meanbox_width / 2
+            meanbox_left = meanbox.xcor() - self.meanbox_width / 2
+            meanbox_top = meanbox.ycor() + self.meanbox_height / 2
+            meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
+
+
+            if(player_right >= meanbox_left and player_left <= meanbox_right and player_top >= meanbox_bottom and player_bottom <= meanbox_top):
+                return True
+        return False
+
+    def bullet_pattern1(self, my_gameid):
+        if my_gameid != self.gameid:
+            return False
+
+        if not self.game_running:
+            return False
+        
+        for meanbox in self.meanboxes:
+            meanbox_right = meanbox.xcor() + self.meanbox_width / 2
+            meanbox_left = meanbox.xcor() - self.meanbox_width / 2
+            meanbox_top = meanbox.ycor() + self.meanbox_height / 2
+            meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
+
+            angle = meanbox.heading()
+
+            if meanbox_right >= self.xmax:
+                meanbox.setx(self.xmax - self.meanbox_width / 2)
+                meanbox.setheading(180 - angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_left <= -self.xmax:
+                meanbox.setx(-self.xmax + self.meanbox_width / 2)
+                meanbox.setheading(180 - angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_top >= self.ymax:
+                meanbox.sety(self.ymax - self.meanbox_height / 2)
+                meanbox.setheading(-angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_bottom <= -self.ymax:
+                meanbox.sety(-self.ymax + self.meanbox_height / 2)
+                meanbox.setheading(-angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+            if self.projectle_player_collision():
+                #self.index = (self.meanboxes.index(meanbox))
+                #p.playsound(self.sounds[self.index], True)
+                return True
+            if not self.projectle_player_collision():
+                meanbox.forward(4)
+        return False
+
 
     def run(self):
         if not self.game_running:
@@ -166,6 +224,7 @@ class Game():
 
         self.player_movement(self.gameid)
         self.border(self.gameid)
+        self.bullet_pattern1(self.gameid)
 
         self.screen.tracer(32, 10)
         self.screen.update()
