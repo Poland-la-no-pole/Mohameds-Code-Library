@@ -16,16 +16,20 @@ class Game():
         self.player = t.Turtle()
         self.coin = t.Turtle()
 
-        self.speed = 10
+
+        self.playerspeed = 10
+        self.meanboxspeed = 4
         self.ymax = 300
         self.xmax = 300
-        self.package = []
+
         self.time = 11
         self.score = 0
         self.gameid = 0
         self.game_running = False
         self.timeover = False
         self.leaderboard_file_name =  "GitHub/Mohameds-Code-Library/Projects/School/1_2_5_gameleaderboard.txt"
+        self.leader_names_list = []
+        self.leader_scores_list = []
         self.sounds = ["GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav", "GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav"]
 
         self.keys = {
@@ -37,7 +41,7 @@ class Game():
         self.gameid = new_gameid
         print(self.gameid)
 
-        
+
         if self.gameid == 0:
             self.start()
             self.game_running = True
@@ -60,6 +64,8 @@ class Game():
         self.player.shape(self.heartimg)
         self.player_height = 50
         self.player_width = 50
+        self.player_hitbox_height = 40
+        self.player_hitbox_width = 40
 
         self.coin.shape("circle")
         self.coin.fillcolor("gold")
@@ -79,7 +85,6 @@ class Game():
             (-15, -15),
             (15, -15)
         )
-
         self.meanboxes = []
         self.sounds = ["GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav", "GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav"]
         self.screen.register_shape("meanbox1", self.meanbox1)
@@ -93,12 +98,13 @@ class Game():
             self.meanbox.showturtle()
             self.meanbox.teleport(random.randint(-self.xmax + 20, self.xmax - 20),random.randint(-self.ymax + 20, self.ymax - 20))
             while True:
-                if -65 < self.meanbox.xcor() < 65 and -65 < self.meanbox.ycor() < 65:
+                if -100 < self.meanbox.xcor() < 100 and -100 < self.meanbox.ycor() < 100:
                     self.meanbox.teleport(random.randint(-self.xmax + 20, self.xmax - 20),random.randint(-self.ymax + 20, self.ymax - 20))
                     continue
                 break
             self.meanbox.seth(random.randint(0, 359))
             self.meanbox.penup()
+
         self.score_tracker(self.gameid)
 
     def setup_controls(self):
@@ -122,13 +128,13 @@ class Game():
             return
 
         if self.keys["w"]:
-            self.player.sety(self.player.ycor() + self.speed)
+            self.player.sety(self.player.ycor() + self.playerspeed)
         if self.keys["s"]:
-            self.player.sety(self.player.ycor() - self.speed)
+            self.player.sety(self.player.ycor() - self.playerspeed)
         if self.keys["a"]:
-            self.player.setx(self.player.xcor() - self.speed)
+            self.player.setx(self.player.xcor() - self.playerspeed)
         if self.keys["d"]:
-            self.player.setx(self.player.xcor() + self.speed)
+            self.player.setx(self.player.xcor() + self.playerspeed)
 
     def click(self, keys, key):
         keys[key] = True
@@ -162,10 +168,10 @@ class Game():
             self.player.sety(-self.ymax + self.player_height/2)
 
     def projectle_player_collision(self):
-        player_right = self.player.xcor() + self.player_width / 2
-        player_left = self.player.xcor() - self.player_width / 2
-        player_top = self.player.ycor() + self.player_height / 2
-        player_bottom = self.player.ycor() - self.player_height / 2
+        player_right = self.player.xcor() + self.player_hitbox_width / 2
+        player_left = self.player.xcor() - self.player_hitbox_width / 2
+        player_top = self.player.ycor() + self.player_hitbox_height / 2
+        player_bottom = self.player.ycor() - self.player_hitbox_height / 2
         for meanbox in self.meanboxes:
             meanbox_right = meanbox.xcor() + self.meanbox_width / 2
             meanbox_left = meanbox.xcor() - self.meanbox_width / 2
@@ -183,14 +189,13 @@ class Game():
 
         if not self.game_running:
             return False
-        
         for meanbox in self.meanboxes:
             meanbox_right = meanbox.xcor() + self.meanbox_width / 2
             meanbox_left = meanbox.xcor() - self.meanbox_width / 2
             meanbox_top = meanbox.ycor() + self.meanbox_height / 2
             meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
 
-            angle = meanbox.heading()
+            angle = random.randint(round(meanbox.heading()) - 20, round(meanbox.heading()) + 20)
 
             if meanbox_right >= self.xmax:
                 meanbox.setx(self.xmax - self.meanbox_width / 2)
@@ -211,12 +216,61 @@ class Game():
                 meanbox.sety(-self.ymax + self.meanbox_height / 2)
                 meanbox.setheading(-angle)
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
-            if self.projectle_player_collision():
-                #self.index = (self.meanboxes.index(meanbox))
-                #p.playsound(self.sounds[self.index], True)
-                return True
-            if not self.projectle_player_collision():
-                meanbox.forward(4)
+            meanbox.forward(self.meanboxspeed)
+        if self.projectle_player_collision():
+            #self.index = (self.meanboxes.index(meanbox))
+            #p.playsound(self.sounds[self.index], False)
+            return True
+        return False
+
+    def bullet_pattern2(self, my_gameid):
+        if my_gameid != self.gameid:
+            return False
+
+        if not self.game_running:
+            return False
+        for meanbox in self.meanboxes:
+            meanbox_right = meanbox.xcor() + self.meanbox_width / 2
+            meanbox_left = meanbox.xcor() - self.meanbox_width / 2
+            meanbox_top = meanbox.ycor() + self.meanbox_height / 2
+            meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
+
+            wanted_angle = math.degrees(math.atan2(self.player.ycor() - meanbox.ycor(), self.player.xcor() - meanbox.xcor()))
+
+            angle_difference = (wanted_angle - meanbox.heading() + 180 ) % 360 -180
+
+            if angle_difference > 0:
+                meanbox.setheading(meanbox.heading() + min(.3 * self.score, angle_difference))
+
+            elif angle_difference < 0:
+                meanbox.setheading(meanbox.heading() - min(.3 * self.score, abs(angle_difference)))
+
+            angle = random.randint(round(meanbox.heading()) - 20, round(meanbox.heading()) + 20)
+
+            if meanbox_right >= self.xmax:
+                meanbox.setx(self.xmax - self.meanbox_width / 2)
+                meanbox.setheading(180 - angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_left <= -self.xmax:
+                meanbox.setx(-self.xmax + self.meanbox_width / 2)
+                meanbox.setheading(180 - angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_top >= self.ymax:
+                meanbox.sety(self.ymax - self.meanbox_height / 2)
+                meanbox.setheading(-angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_bottom <= -self.ymax:
+                meanbox.sety(-self.ymax + self.meanbox_height / 2)
+                meanbox.setheading(-angle)
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+            meanbox.forward(self.meanboxspeed)
+        if self.projectle_player_collision():
+            #self.index = (self.meanboxes.index(meanbox))
+            #p.playsound(self.sounds[self.index], False)
+            return True
         return False
 
     def start(self):
@@ -280,10 +334,10 @@ class Game():
 
         if not self.game_running:
             return False
-        player_right = self.player.xcor() + self.player_width / 2
-        player_left = self.player.xcor() - self.player_width / 2
-        player_top = self.player.ycor() + self.player_height / 2
-        player_bottom = self.player.ycor() - self.player_height / 2
+        player_right = self.player.xcor() + self.player_hitbox_width / 2
+        player_left = self.player.xcor() - self.player_hitbox_width / 2
+        player_top = self.player.ycor() + self.player_hitbox_height / 2
+        player_bottom = self.player.ycor() - self.player_hitbox_height / 2
 
         point_right = self.coin.xcor() + self.coin_width / 2
         point_left = self.coin.xcor() - self.coin_width / 2
@@ -291,9 +345,10 @@ class Game():
         point_bottom = self.coin.ycor() - self.coin_height / 2
         if (player_right >= point_left and player_left <= point_right and player_top >= point_bottom and player_bottom <= point_top):
             self.coin.teleport(random.randint(-self.xmax + 20, self.xmax - 20), random.randint(-self.ymax+ 20, self.ymax - 20))
-            self.time += 4
+            self.time += 3
             self.score += 1
-            p.playsound("GitHub/Mohameds-Code-Library/Audios/jarona.wav", False)
+            self.meanboxspeed += self.score/10
+            #p.playsound("GitHub/Mohameds-Code-Library/Audios/jarona.wav", False)
         return (self.time, self.score)
 
     def run(self):
@@ -303,21 +358,19 @@ class Game():
         self.player_movement(self.gameid)
         self.border(self.gameid)
         self.points(self.gameid)
-        self.bullet_pattern1(self.gameid)
-
 
         if self.timeover:
             self.stop()
             self.restart_game()
             return
 
-        lost = self.bullet_pattern1(self.gameid)
+        lost = self.bullet_pattern2(self.gameid)
         if lost:
             self.stop()
             self.restart_game()
             return
 
-        self.screen.tracer(32, 10)
+        self.screen.tracer(0)
         self.screen.update()
         self.screen.ontimer(self.run, 16)
 
