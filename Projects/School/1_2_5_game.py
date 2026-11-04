@@ -17,8 +17,7 @@ class Game():
         self.coin = t.Turtle()
 
 
-        self.playerspeed = 10
-        self.meanboxspeed = 4
+        self.playerspeed = 6
         self.ymax = 300
         self.xmax = 300
 
@@ -64,8 +63,8 @@ class Game():
         self.player.shape(self.heartimg)
         self.player_height = 50
         self.player_width = 50
-        self.player_hitbox_height = 40
-        self.player_hitbox_width = 40
+        self.player_hitbox_height = 30
+        self.player_hitbox_width = 30
 
         self.coin.shape("circle")
         self.coin.fillcolor("gold")
@@ -79,30 +78,45 @@ class Game():
                 continue
             break
 
-        self.meanbox1 = (
-            (15, 15),
-            (-15, 15),
-            (-15, -15),
-            (15, -15)
-        )
+
         self.meanboxes = []
+        self.meanboxes_x_speeds = []
+        self.meanboxes_y_speeds = []
+        self.meanboxes_hypotenuse_speeds = []
         self.sounds = ["GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav", "GitHub/Mohameds-Code-Library/Audios/anything.wav", "GitHub/Mohameds-Code-Library/Audios/chaos.wav", "GitHub/Mohameds-Code-Library/Audios/jarona.wav", "GitHub/Mohameds-Code-Library/Audios/metamorphosis.wav", "GitHub/Mohameds-Code-Library/Audios/sanfrancisco.wav"]
-        self.screen.register_shape("meanbox1", self.meanbox1)
-        for _ in range(10):
+        for i in range(10):
             self.meanbox = t.Turtle()
-            self.meanbox_width = 30
-            self.meanbox_height = 30
+            self.meanbox_radius = 25
             self.meanboxes.append(self.meanbox)
-            self.meanbox.shape("meanbox1")
-            self.meanbox.fillcolor("gold1")
+            self.meanbox.shape("circle")
+            self.meanbox.shapesize(2)
+            self.meanbox.fillcolor("blue1")
             self.meanbox.showturtle()
             self.meanbox.teleport(random.randint(-self.xmax + 20, self.xmax - 20),random.randint(-self.ymax + 20, self.ymax - 20))
+            self.meanbox_x_speed = random.choice((-4, 4))
+            self.meanbox_y_speed = random.choice((-4, 4))
+            self.meanboxes_x_speeds.append(self.meanbox_x_speed)
+            self.meanboxes_y_speeds.append(self.meanbox_y_speed)
+            self.meanbox_hypotenuse = math.sqrt((self.meanboxes_x_speeds[i] ** 2) + (self.meanboxes_y_speeds[i] ** 2))
+            self.meanboxes_hypotenuse_speeds.append(self.meanbox_hypotenuse)
             while True:
                 if -100 < self.meanbox.xcor() < 100 and -100 < self.meanbox.ycor() < 100:
                     self.meanbox.teleport(random.randint(-self.xmax + 20, self.xmax - 20),random.randint(-self.ymax + 20, self.ymax - 20))
                     continue
+                for i, meanbox in enumerate(self.meanboxes):
+                    meanbox_right = meanbox.xcor() + self.meanbox_radius/ 2
+                    meanbox_left = meanbox.xcor() - self.meanbox_radius / 2
+                    meanbox_top = meanbox.ycor() + self.meanbox_radius / 2
+                    meanbox_bottom = meanbox.ycor() - self.meanbox_radius / 2
+                    for e, meanboxx in enumerate(self.meanboxes[i + 1:], i + 1):
+                        meanboxx_right = meanboxx.xcor() + self.meanbox_radius / 2
+                        meanboxx_left = meanboxx.xcor() - self.meanbox_radius / 2
+                        meanboxx_top = meanboxx.ycor() + self.meanbox_radius / 2
+                        meanboxx_bottom = meanboxx.ycor() - self.meanbox_radius / 2
+                        if(meanboxx_right >= meanbox_left and meanboxx_left <= meanbox_right and meanboxx_top >= meanbox_bottom and meanboxx_bottom <= meanbox_top):
+                            meanbox.teleport(random.randint(-self.xmax + 20, self.xmax - 20),random.randint(-self.ymax + 20, self.ymax - 20))
+                            meanboxx.teleport(random.randint(-self.xmax + 20, self.xmax - 20),random.randint(-self.ymax + 20, self.ymax - 20))
                 break
-            self.meanbox.seth(random.randint(0, 359))
             self.meanbox.penup()
 
         self.score_tracker(self.gameid)
@@ -168,20 +182,109 @@ class Game():
             self.player.sety(-self.ymax + self.player_height/2)
 
     def projectle_player_collision(self):
-        player_right = self.player.xcor() + self.player_hitbox_width / 2
-        player_left = self.player.xcor() - self.player_hitbox_width / 2
-        player_top = self.player.ycor() + self.player_hitbox_height / 2
-        player_bottom = self.player.ycor() - self.player_hitbox_height / 2
+        player_right = self.player.xcor() + self.player_hitbox_width
+        player_left = self.player.xcor() - self.player_hitbox_width
+        player_top = self.player.ycor() + self.player_hitbox_height
+        player_bottom = self.player.ycor() - self.player_hitbox_height
         for meanbox in self.meanboxes:
-            meanbox_right = meanbox.xcor() + self.meanbox_width / 2
-            meanbox_left = meanbox.xcor() - self.meanbox_width / 2
-            meanbox_top = meanbox.ycor() + self.meanbox_height / 2
-            meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
+            meanbox_right = meanbox.xcor() + self.meanbox_radius
+            meanbox_left = meanbox.xcor() - self.meanbox_radius
+            meanbox_top = meanbox.ycor() + self.meanbox_radius
+            meanbox_bottom = meanbox.ycor() - self.meanbox_radius
 
 
             if(player_right >= meanbox_left and player_left <= meanbox_right and player_top >= meanbox_bottom and player_bottom <= meanbox_top):
                 return True
         return False
+
+    def projectle_projectle_collision(self):
+        for i, meanbox in enumerate(self.meanboxes):
+            meanbox_right = meanbox.xcor() + self.meanbox_radius
+            meanbox_left = meanbox.xcor() - self.meanbox_radius
+            meanbox_top = meanbox.ycor() + self.meanbox_radius
+            meanbox_bottom = meanbox.ycor() - self.meanbox_radius
+            for e, meanboxx in enumerate(self.meanboxes[i+1:], i+1):
+                meanboxx_right = meanboxx.xcor() + self.meanbox_radius
+                meanboxx_left = meanboxx.xcor() - self.meanbox_radius
+                meanboxx_top = meanboxx.ycor() + self.meanbox_radius
+                meanboxx_bottom = meanboxx.ycor() - self.meanbox_radius
+                if(meanboxx_right >= meanbox_left and meanboxx_left <= meanbox_right and meanboxx_top >= meanbox_bottom and meanboxx_bottom <= meanbox_top):
+                    overlap_x = min(meanbox_right, meanboxx_right) - max(meanbox_left, meanboxx_left)
+                    overlap_y = min(meanbox_top, meanboxx_top) - max(meanbox_bottom, meanboxx_bottom)
+                    if overlap_x < overlap_y:
+                        if meanbox.xcor() < meanboxx.xcor(): #left for meanbox, right for meanboxx
+                            meanbox.setx((meanbox.xcor() - overlap_x / 2) - 1)
+                            meanboxx.setx((meanboxx.xcor() + overlap_x / 2) + 1)
+
+                            self.meanboxes_x_speeds[i] = -abs(self.meanboxes_x_speeds[i])
+                            self.meanboxes_x_speeds[e] = abs(self.meanboxes_x_speeds[e])
+
+                            if self.meanboxes_y_speeds[i] < 0:
+                                self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                            
+                            if self.meanboxes_y_speeds[i] > 0:
+                                self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+
+                            if self.meanboxes_y_speeds[e] < 0:
+                                self.meanboxes_y_speeds[e] = -math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_x_speeds[e] ** 2))
+                            
+                            if self.meanboxes_y_speeds[e] > 0:
+                                self.meanboxes_y_speeds[e] = math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_x_speeds[e] ** 2))
+                        else: #left for meanboxx, right for meanbox
+                            meanbox.setx((meanbox.xcor() + overlap_x / 2) + 1)
+                            meanboxx.setx((meanboxx.xcor() - overlap_x / 2) - 1)
+
+                            self.meanboxes_x_speeds[i] = abs(self.meanboxes_x_speeds[i])
+                            self.meanboxes_x_speeds[e] = -abs(self.meanboxes_x_speeds[e])
+
+                            if self.meanboxes_y_speeds[i] < 0:
+                                self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                            
+                            if self.meanboxes_y_speeds[i] > 0:
+                                self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+
+                            if self.meanboxes_y_speeds[e] < 0:
+                                self.meanboxes_y_speeds[e] = -math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_x_speeds[e] ** 2))
+                            
+                            if self.meanboxes_y_speeds[e] > 0:
+                                self.meanboxes_y_speeds[e] = math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_x_speeds[e] ** 2))
+                    else:
+                        if meanbox.ycor() < meanboxx.ycor(): #down for meanbox, up for meanboxx
+                            meanbox.sety((meanbox.ycor() - overlap_y / 2) - 1)
+                            meanboxx.sety((meanboxx.ycor() + overlap_y / 2) + 1)
+
+                            self.meanboxes_y_speeds[i] = -abs(self.meanboxes_y_speeds[i])
+                            self.meanboxes_y_speeds[e] = abs(self.meanboxes_y_speeds[e])
+
+                            if self.meanboxes_x_speeds[i] < 0:
+                                self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                            
+                            if self.meanboxes_x_speeds[i] > 0:
+                                self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+
+                            if self.meanboxes_x_speeds[e] < 0:
+                                self.meanboxes_x_speeds[e] = -math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_y_speeds[e] ** 2))
+                            
+                            if self.meanboxes_x_speeds[e] > 0:
+                                self.meanboxes_x_speeds[e] = math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_y_speeds[e] ** 2))
+                        else: #up for meanbox, down for meanboxx
+                            meanbox.sety((meanbox.ycor() + overlap_y / 2) + 1)
+                            meanboxx.sety((meanboxx.ycor() - overlap_y / 2) - 1)
+
+                            self.meanboxes_y_speeds[i] = abs(self.meanboxes_y_speeds[i])
+                            self.meanboxes_y_speeds[e] = -abs(self.meanboxes_y_speeds[e])
+
+                            if self.meanboxes_x_speeds[i] < 0:
+                                self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                            
+                            if self.meanboxes_x_speeds[i] > 0:
+                                self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+
+                            if self.meanboxes_x_speeds[e] < 0:
+                                self.meanboxes_x_speeds[e] = -math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_y_speeds[e] ** 2))
+                            
+                            if self.meanboxes_x_speeds[e] > 0:
+                                self.meanboxes_x_speeds[e] = math.sqrt((self.meanboxes_hypotenuse_speeds[e] ** 2) - (self.meanboxes_y_speeds[e] ** 2))
 
     def bullet_pattern1(self, my_gameid):
         if my_gameid != self.gameid:
@@ -189,34 +292,56 @@ class Game():
 
         if not self.game_running:
             return False
-        for meanbox in self.meanboxes:
-            meanbox_right = meanbox.xcor() + self.meanbox_width / 2
-            meanbox_left = meanbox.xcor() - self.meanbox_width / 2
-            meanbox_top = meanbox.ycor() + self.meanbox_height / 2
-            meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
-
-            angle = random.randint(round(meanbox.heading()) - 20, round(meanbox.heading()) + 20)
+        for i, meanbox in enumerate(self.meanboxes):
+            meanbox_right = meanbox.xcor() + self.meanbox_radius
+            meanbox_left = meanbox.xcor() - self.meanbox_radius
+            meanbox_top = meanbox.ycor() + self.meanbox_radius
+            meanbox_bottom = meanbox.ycor() - self.meanbox_radius
 
             if meanbox_right >= self.xmax:
-                meanbox.setx(self.xmax - self.meanbox_width / 2)
-                meanbox.setheading(180 - angle)
+                meanbox.setx(self.xmax - self.meanbox_radius)
+                self.meanboxes_x_speeds[i] = -abs(self.meanboxes_x_speeds[i])
+                
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                
+                if self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
 
             if meanbox_left <= -self.xmax:
-                meanbox.setx(-self.xmax + self.meanbox_width / 2)
-                meanbox.setheading(180 - angle)
+                meanbox.setx(-self.xmax + self.meanbox_radius)
+                self.meanboxes_x_speeds[i] = abs(self.meanboxes_x_speeds[i])
+                
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                
+                if self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
 
             if meanbox_top >= self.ymax:
-                meanbox.sety(self.ymax - self.meanbox_height / 2)
-                meanbox.setheading(-angle)
+                meanbox.sety(self.ymax - self.meanbox_radius)
+                self.meanboxes_y_speeds[i] = -abs(self.meanboxes_y_speeds[i])
+                
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                
+                if self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
 
             if meanbox_bottom <= -self.ymax:
-                meanbox.sety(-self.ymax + self.meanbox_height / 2)
-                meanbox.setheading(-angle)
+                meanbox.sety(-self.ymax + self.meanbox_radius)
+                self.meanboxes_y_speeds[i] = abs(self.meanboxes_y_speeds[i])
+                
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                
+                if self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
-            meanbox.forward(self.meanboxspeed)
+            meanbox.goto(meanbox.xcor() + self.meanboxes_x_speeds[i], meanbox.ycor() + self.meanboxes_y_speeds[i])
         if self.projectle_player_collision():
             #self.index = (self.meanboxes.index(meanbox))
             #p.playsound(self.sounds[self.index], False)
@@ -229,44 +354,149 @@ class Game():
 
         if not self.game_running:
             return False
-        for meanbox in self.meanboxes:
-            meanbox_right = meanbox.xcor() + self.meanbox_width / 2
-            meanbox_left = meanbox.xcor() - self.meanbox_width / 2
-            meanbox_top = meanbox.ycor() + self.meanbox_height / 2
-            meanbox_bottom = meanbox.ycor() - self.meanbox_height / 2
-
-            wanted_angle = math.degrees(math.atan2(self.player.ycor() - meanbox.ycor(), self.player.xcor() - meanbox.xcor()))
-
-            angle_difference = (wanted_angle - meanbox.heading() + 180 ) % 360 -180
-
-            if angle_difference > 0:
-                meanbox.setheading(meanbox.heading() + min(.3 * self.score, angle_difference))
-
-            elif angle_difference < 0:
-                meanbox.setheading(meanbox.heading() - min(.3 * self.score, abs(angle_difference)))
-
-            angle = random.randint(round(meanbox.heading()) - 20, round(meanbox.heading()) + 20)
+        for i, meanbox in enumerate(self.meanboxes):
+            meanbox_right = meanbox.xcor() + self.meanbox_radius
+            meanbox_left = meanbox.xcor() - self.meanbox_radius
+            meanbox_top = meanbox.ycor() + self.meanbox_radius
+            meanbox_bottom = meanbox.ycor() - self.meanbox_radius
 
             if meanbox_right >= self.xmax:
-                meanbox.setx(self.xmax - self.meanbox_width / 2)
-                meanbox.setheading(180 - angle)
+                meanbox.setx(self.xmax - self.meanbox_radius)
+                self.meanboxes_x_speeds[i] = -abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] + 1.5)))
+                
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                
+                if self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
 
             if meanbox_left <= -self.xmax:
-                meanbox.setx(-self.xmax + self.meanbox_width / 2)
-                meanbox.setheading(180 - angle)
+                meanbox.setx(-self.xmax + self.meanbox_radius)
+                self.meanboxes_x_speeds[i] = abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] - 1.5), min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] + 1.5)))
+                
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                
+                if self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
 
             if meanbox_top >= self.ymax:
-                meanbox.sety(self.ymax - self.meanbox_height / 2)
-                meanbox.setheading(-angle)
+                meanbox.sety(self.ymax - self.meanbox_radius)
+                self.meanboxes_y_speeds[i] = -abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] + 1.5)))
+                
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                
+                if self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
 
             if meanbox_bottom <= -self.ymax:
-                meanbox.sety(-self.ymax + self.meanbox_height / 2)
-                meanbox.setheading(-angle)
+                meanbox.sety(-self.ymax + self.meanbox_radius)
+                self.meanboxes_y_speeds[i] = abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] + 1.5)))
+                
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                
+                if self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
-            meanbox.forward(self.meanboxspeed)
+            self.projectle_projectle_collision()
+            meanbox.goto(meanbox.xcor() + self.meanboxes_x_speeds[i], meanbox.ycor() + self.meanboxes_y_speeds[i])
+        if self.projectle_player_collision():
+            #self.index = (self.meanboxes.index(meanbox))
+            #p.playsound(self.sounds[self.index], False)
+            return True
+        return False
+
+    def bullet_pattern3(self, my_gameid):
+        if my_gameid != self.gameid:
+            return False
+
+        if not self.game_running:
+            return False
+        for i, meanbox in enumerate(self.meanboxes):
+            meanbox_right = meanbox.xcor() + self.meanbox_radius
+            meanbox_left = meanbox.xcor() - self.meanbox_radius
+            meanbox_top = meanbox.ycor() + self.meanbox_radius
+            meanbox_bottom = meanbox.ycor() - self.meanbox_radius
+
+            wanted_x = self.player.xcor() - meanbox.xcor()
+            wanted_y = self.player.ycor() - meanbox.ycor()
+            if i % 2 == 1:
+                if wanted_y > 0:
+                    self.meanboxes_y_speeds[i] += .5
+
+                if wanted_y < 0:
+                    self.meanboxes_y_speeds[i] -= .5
+
+                if wanted_x > 0:
+                    self.meanboxes_x_speeds[i] += .5
+
+                if wanted_x < 0:
+                    self.meanboxes_x_speeds[i] -= .5
+
+                current_speed = math.hypot(
+                    self.meanboxes_x_speeds[i],
+                    self.meanboxes_y_speeds[i]
+                )
+
+                if current_speed != 0:
+                    self.meanboxes_x_speeds[i] *= (
+                        self.meanboxes_hypotenuse_speeds[i] / current_speed
+                    )
+
+                    self.meanboxes_y_speeds[i] *= (
+                        self.meanboxes_hypotenuse_speeds[i] / current_speed
+                    )
+
+            if meanbox_right >= self.xmax:
+                meanbox.setx(self.xmax - self.meanbox_radius)
+                self.meanboxes_x_speeds[i] = -abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] + 1.5)))
+                
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                
+                if self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_left <= -self.xmax:
+                meanbox.setx(-self.xmax + self.meanbox_radius)
+                self.meanboxes_x_speeds[i] = abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_x_speeds[i] + 1.5)))
+                
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                
+                if self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_x_speeds[i] ** 2))
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_top >= self.ymax:
+                meanbox.sety(self.ymax - self.meanbox_radius)
+                self.meanboxes_y_speeds[i] = -abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] + 1.5)))
+                
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                
+                if self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+
+            if meanbox_bottom <= -self.ymax:
+                meanbox.sety(-self.ymax + self.meanbox_radius)
+                self.meanboxes_y_speeds[i] = abs(random.uniform(max(-self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] - 1.5),min(self.meanboxes_hypotenuse_speeds[i], self.meanboxes_y_speeds[i] + 1.5)))
+                
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] = -math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                
+                if self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] = math.sqrt((self.meanboxes_hypotenuse_speeds[i] ** 2) - (self.meanboxes_y_speeds[i] ** 2))
+                p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
+            self.projectle_projectle_collision()
+            meanbox.goto(meanbox.xcor() + self.meanboxes_x_speeds[i], meanbox.ycor() + self.meanboxes_y_speeds[i])
         if self.projectle_player_collision():
             #self.index = (self.meanboxes.index(meanbox))
             #p.playsound(self.sounds[self.index], False)
@@ -334,10 +564,11 @@ class Game():
 
         if not self.game_running:
             return False
-        player_right = self.player.xcor() + self.player_hitbox_width / 2
-        player_left = self.player.xcor() - self.player_hitbox_width / 2
-        player_top = self.player.ycor() + self.player_hitbox_height / 2
-        player_bottom = self.player.ycor() - self.player_hitbox_height / 2
+        
+        player_right = self.player.xcor() + self.player_width / 2
+        player_left = self.player.xcor() - self.player_width / 2
+        player_top = self.player.ycor() + self.player_height / 2
+        player_bottom = self.player.ycor() - self.player_height / 2
 
         point_right = self.coin.xcor() + self.coin_width / 2
         point_left = self.coin.xcor() - self.coin_width / 2
@@ -347,8 +578,23 @@ class Game():
             self.coin.teleport(random.randint(-self.xmax + 20, self.xmax - 20), random.randint(-self.ymax+ 20, self.ymax - 20))
             self.time += 3
             self.score += 1
-            self.meanboxspeed += self.score/10
-            #p.playsound("GitHub/Mohameds-Code-Library/Audios/jarona.wav", False)
+            for i, meanbox in enumerate(self.meanboxes):
+                increase = self.score / 100
+
+                if self.meanboxes_x_speeds[i] < 0:
+                    self.meanboxes_x_speeds[i] -= increase
+                elif self.meanboxes_x_speeds[i] > 0:
+                    self.meanboxes_x_speeds[i] += increase
+
+                if self.meanboxes_y_speeds[i] < 0:
+                    self.meanboxes_y_speeds[i] -= increase
+                elif self.meanboxes_y_speeds[i] > 0:
+                    self.meanboxes_y_speeds[i] += increase
+
+                self.meanboxes_hypotenuse_speeds[i] = math.sqrt((self.meanboxes_x_speeds[i] ** 2) + (self.meanboxes_y_speeds[i] ** 2))
+
+
+            p.playsound("GitHub/Mohameds-Code-Library/Audios/jarona.wav", False)
         return (self.time, self.score)
 
     def run(self):
@@ -364,11 +610,25 @@ class Game():
             self.restart_game()
             return
 
-        lost = self.bullet_pattern2(self.gameid)
-        if lost:
-            self.stop()
-            self.restart_game()
-            return
+        if self.score <= 10:
+            lost = self.bullet_pattern1(self.gameid)
+            if lost:
+                self.stop()
+                self.restart_game()
+                return
+
+        if 20 >= self.score > 10:
+            lost = self.bullet_pattern2(self.gameid)
+            if lost:
+                self.stop()
+                self.restart_game()
+                return
+        if 30 >= self.score > 20:
+            lost = self.bullet_pattern3(self.gameid)
+            if lost:
+                self.stop()
+                self.restart_game()
+                return
 
         self.screen.tracer(0)
         self.screen.update()
