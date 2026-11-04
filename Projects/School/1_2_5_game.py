@@ -11,13 +11,14 @@ class Game():
             self.screen = t.Screen()
         else:
             self.screen = screen
+        self.screen.title("larptale")
 
         self.counter = t.Turtle()
         self.player = t.Turtle()
         self.coin = t.Turtle()
 
 
-        self.playerspeed = 6
+        self.playerspeed = 8
         self.ymax = 300
         self.xmax = 300
 
@@ -63,8 +64,10 @@ class Game():
         self.player.shape(self.heartimg)
         self.player_height = 50
         self.player_width = 50
-        self.player_hitbox_height = 30
-        self.player_hitbox_width = 30
+        self.player_top_hitbox_height = 10
+        self.player_top_hitbox_width = 30
+        self.player_bottom_hitbox_height = 10
+        self.player_bottom_hitbox_width = 10
 
         self.coin.shape("circle")
         self.coin.fillcolor("gold")
@@ -182,10 +185,14 @@ class Game():
             self.player.sety(-self.ymax + self.player_height/2)
 
     def projectle_player_collision(self):
-        player_right = self.player.xcor() + self.player_hitbox_width
-        player_left = self.player.xcor() - self.player_hitbox_width
-        player_top = self.player.ycor() + self.player_hitbox_height
-        player_bottom = self.player.ycor() - self.player_hitbox_height
+        player_top_right = self.player.xcor() + self.player_top_hitbox_width / 2
+        player_top_left = self.player.xcor() - self.player_top_hitbox_width / 2
+        player_top_top = self.player.ycor() + self.player_top_hitbox_height
+        player_top_bottom = self.player.ycor()
+        player_bottom_right = self.player.xcor() + self.player_bottom_hitbox_width / 2
+        player_bottom_left = self.player.xcor() - self.player_bottom_hitbox_width / 2
+        player_bottom_top = self.player.ycor()
+        player_bottom_bottom = self.player.ycor() - self.player_bottom_hitbox_height
         for meanbox in self.meanboxes:
             meanbox_right = meanbox.xcor() + self.meanbox_radius
             meanbox_left = meanbox.xcor() - self.meanbox_radius
@@ -193,7 +200,9 @@ class Game():
             meanbox_bottom = meanbox.ycor() - self.meanbox_radius
 
 
-            if(player_right >= meanbox_left and player_left <= meanbox_right and player_top >= meanbox_bottom and player_bottom <= meanbox_top):
+            if(player_top_right >= meanbox_left and player_top_left <= meanbox_right and player_top_top >= meanbox_bottom and player_top_bottom <= meanbox_top):
+                return True
+            if(player_bottom_right >= meanbox_left and player_bottom_left <= meanbox_right and player_bottom_top >= meanbox_bottom and player_bottom_bottom <= meanbox_top):
                 return True
         return False
 
@@ -508,7 +517,7 @@ class Game():
         while "," in self.player_name or len(self.player_name) == 0 or len(self.player_name) > 12:
             self.player_name = t.textinput("Name", "Enter your name without using a comma")
         while True:
-            self.startchoice = t.textinput("Intro","This is my game, would you like to play it")
+            self.startchoice = t.textinput("Intro","This is my game, would you like to play it(yes or no please. btw you can use wasd to move, get the coin)")
             if (self.startchoice in ["yes", "Yes", "y", "Y"]):
                 self.game_running = True
                 break
@@ -610,20 +619,20 @@ class Game():
             self.restart_game()
             return
 
-        if self.score <= 10:
+        if self.score <= 7:
             lost = self.bullet_pattern1(self.gameid)
             if lost:
                 self.stop()
                 self.restart_game()
                 return
 
-        if 20 >= self.score > 10:
+        if 14 >= self.score > 7:
             lost = self.bullet_pattern2(self.gameid)
             if lost:
                 self.stop()
                 self.restart_game()
                 return
-        if 30 >= self.score > 20:
+        if 21 >= self.score > 14:
             lost = self.bullet_pattern3(self.gameid)
             if lost:
                 self.stop()
@@ -640,3 +649,7 @@ game.run()
 
 t.mainloop()
 
+
+
+
+#well rn it seems like the issue is just your timers are messing with each other, the code itself isnt wrong since it just moves itZ
