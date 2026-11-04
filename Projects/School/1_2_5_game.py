@@ -427,16 +427,16 @@ class Game():
             wanted_y = self.player.ycor() - meanbox.ycor()
             if i % 2 == 1:
                 if wanted_y > 0:
-                    self.meanboxes_y_speeds[i] += .5
+                    self.meanboxes_y_speeds[i] += 1
 
                 if wanted_y < 0:
-                    self.meanboxes_y_speeds[i] -= .5
+                    self.meanboxes_y_speeds[i] -= 1
 
                 if wanted_x > 0:
-                    self.meanboxes_x_speeds[i] += .5
+                    self.meanboxes_x_speeds[i] += 1
 
                 if wanted_x < 0:
-                    self.meanboxes_x_speeds[i] -= .5
+                    self.meanboxes_x_speeds[i] -= 1
 
                 current_speed = math.hypot(
                     self.meanboxes_x_speeds[i],
