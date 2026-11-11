@@ -352,8 +352,8 @@ class Game():
                 p.playsound("GitHub/Mohameds-Code-Library/Audios/bounce.wav", False)
             meanbox.goto(meanbox.xcor() + self.meanboxes_x_speeds[i], meanbox.ycor() + self.meanboxes_y_speeds[i])
         if self.projectle_player_collision():
-            #self.index = (self.meanboxes.index(meanbox))
-            #p.playsound(self.sounds[self.index], False)
+            self.index = (self.meanboxes.index(meanbox))
+            p.playsound(self.sounds[self.index], False)
             return True
         return False
 
