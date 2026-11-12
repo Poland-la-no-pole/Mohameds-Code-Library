@@ -12,6 +12,8 @@ class Game:
         pygame.display.set_caption("ninja game for cool guys and girls and others who arent included") # name of the window
         self.screen = pygame.display.set_mode((800, 800))#sets up the window / scren to display our game
 
+        self.display = pygame.Surface((400, 400))
+
         self.clock = pygame.time.Clock() # creates the object to track time
 
         self.movementy = [False, False]
@@ -27,7 +29,7 @@ class Game:
             self.screen.fill((0, 0, 0))#sets the background to the color in there. rgb
 
             self.player.update(((self.movementx[1] - self.movementx[0]) * 5, (self.movementy[1] - self.movementy[0]) * 5))
-            self.player.render(self.screen)
+            self.player.render(self.display)
 
             for event in pygame.event.get():#how pygame registers events and such
                 if event.type == pygame.QUIT:
@@ -51,8 +53,9 @@ class Game:
                         self.movementx[1] = False
                     if event.key == pygame.K_a:
                         self.movementx[0] = False
+        
 
-
+            self.screen.blit(self.display)
             pygame.display.update()
             self.clock.tick(60)
 
