@@ -5,7 +5,6 @@ screen = t.Screen()
 screen.bgpic("Github/Mohameds-Code-Library/Images/random/coverpage.png")
 screen.window_height()
 screen.window_width()
-screen.listen()
 name_writer = t.Turtle()
 info_writer = t.Turtle()
 story_writer = t.Turtle()
@@ -20,7 +19,7 @@ page = 0
 names = []
 infos = []
 stories = []
-intro_writer.teleport(-280, -30)
+intro_writer.teleport(-280, -100)
 #screen.bgpic("Github/Mohameds-Code-Library/Images/random/page.png")
 def page_turn_left():
     global page
@@ -58,7 +57,7 @@ def pagenumber():
         screen.clear()
     if page <= 0:
         screen.bgpic("Github/Mohameds-Code-Library/Images/random/coverpage.png")
-        intro_writer.write("use the arrow keys to switch between\n pages, use r to add a new page", font = ["Arial", 25, "normal"])
+        intro_writer.write("use the left and right arrow keys to\n switch between pages, use r to add\n a new page", font = ["Arial", 25, "normal"])
         page = 0
 def page_info():
     
