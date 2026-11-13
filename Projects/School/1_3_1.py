@@ -3,23 +3,33 @@ import textwrap
 
 screen = t.Screen()
 screen.bgpic("Github/Mohameds-Code-Library/Images/random/coverpage.png")
+screen.window_height()
+screen.window_width()
 screen.listen()
 name_writer = t.Turtle()
 info_writer = t.Turtle()
 story_writer = t.Turtle()
+intro_writer = t.Turtle()
+page_writer = t.Turtle()
 name_writer.hideturtle()
 info_writer.hideturtle()
+story_writer.hideturtle()
+intro_writer.hideturtle()
+page_writer.hideturtle()
 page = 0
 names = []
 infos = []
 stories = []
+intro_writer.teleport(-280, -30)
 #screen.bgpic("Github/Mohameds-Code-Library/Images/random/page.png")
 def page_turn_left():
     global page
     page -= 1
+    
 def page_turn_right():
     global page
     page += 1
+    
 def page_turn_and_add():
     while True:
         screen.listen()
@@ -34,18 +44,21 @@ def pagenumber():
     name_writer.teleport(0,270)
     info_writer.teleport(0,170)
     story_writer.teleport(-280 ,-200)
+    page_writer.teleport(290, -300)
     if page > 0:
         screen.bgpic("Github/Mohameds-Code-Library/Images/random/page.png")
         name_writer.write(names[min(names.__len__() - 1, page - 1)],font = ["Arial", 25, "normal"])
         info_writer.write(infos[min(infos.__len__() - 1, page - 1)],font = ["Arial", 25, "normal"])
         storye = textwrap.fill(stories[min(stories.__len__() - 1, page - 1)], 30)
         story_writer.write(storye, font = ["Arial", 25, "normal"])
+        page_writer.write(min(names.__len__(), page), font = ["Arial", 25, "normal"])
         if page > names.__len__() - 1:
             page = names.__len__()
     if newpage != page:
         screen.clear()
     if page <= 0:
         screen.bgpic("Github/Mohameds-Code-Library/Images/random/coverpage.png")
+        intro_writer.write("use the arrow keys to switch between\n pages, use r to add a new page", font = ["Arial", 25, "normal"])
         page = 0
 def page_info():
     
@@ -83,7 +96,7 @@ def page_info():
         outerindex += 1
 def page_add():
     nameinput = t.textinput("name", "what is your name")
-    infoinput = t.textinput("info", "what info do you want to be added,like your phone number for example")
+    infoinput = t.textinput("info", "what is your phone number")
     storyinput = t.textinput("story", "what story do you want to share")
     names.append(nameinput)
     infos.append(infoinput)
