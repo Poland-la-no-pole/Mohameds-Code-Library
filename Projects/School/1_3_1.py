@@ -82,7 +82,17 @@ def page_info():
         innerindex += 1
         outerindex += 1
 def page_add():
-    
+    nameinput = t.textinput("name", "what is your name")
+    infoinput = t.textinput("info", "what info do you want to be added,like your phone number for example")
+    storyinput = t.textinput("story", "what story do you want to share")
+    names.append(nameinput)
+    infos.append(infoinput)
+    stories.append(storyinput)
+    file = open("Github/Mohameds-Code-Library/Projects/School/info.txt", "w")
+    for index in range(len(names)):
+        file.write(names[index] + "|" + str((infos[index])) + "|" + str((stories[index])) + "þ\n")
+    file.close()
+
 
 page_info()
 page_turn_and_add()
